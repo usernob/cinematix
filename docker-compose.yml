@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  user-frontend:
+    container_name: user-frontend
+    image: user-frontend
+    build:
+      context: ./user-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 4000:3000 
+  admin-frontend:
+    container_name: admin-frontend
+    image: admin-frontend
+    build:
+      context: ./admin-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 4100:3000
