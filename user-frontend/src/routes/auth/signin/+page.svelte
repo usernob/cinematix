@@ -68,7 +68,7 @@
 			color={password === passwordverif ? 'gray' : 'red'}>Password Verification</Label
 		>
 		<Input
-			type={show ? 'text' : 'password'}
+			type={show2 ? 'text' : 'password'}
 			id="password-verification"
 			placeholder="•••••••••"
 			class="text-md border-2"

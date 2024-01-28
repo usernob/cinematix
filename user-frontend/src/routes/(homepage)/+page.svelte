@@ -55,14 +55,14 @@
 		duration={10000}
 		let:Controls
 		let:Indicators
-		class="aspect-video min-h-[80vh] w-full rounded-none"
+		class="min-h-[60vh] md:min-h-[90vh] w-full rounded-none"
 		on:change={({ detail }) => (image = detail)}
 	>
 		<div
-			class="absolute inset-x-0 inset-y-16 bottom-0 flex flex-col items-start justify-end bg-gradient-to-t from-slate-50 to-transparent pb-10 dark:from-gray-900"
+			class="absolute inset-x-0 inset-y-16 bottom-0 flex flex-col items-start justify-end bg-gradient-to-t from-gray-800 to-transparent pb-10 dark:from-gray-900"
 		>
-			<div class="container">
-				<h2 class="text-3xl font-bold">{image?.title}</h2>
+			<div class="container text-white">
+				<h2 class="text-lg md:text-3xl font-bold">{image?.title}</h2>
 				<p class="text-sm">By {image?.alt}</p>
 			</div>
 		</div>
@@ -72,23 +72,21 @@
 		<Controls />
 	</Carousel>
 
-	<div class="container mt-16">
+	<div class="container mt-8 md:mt-16">
 		<section>
-			<h1 class="mb-4 text-2xl font-extrabold md:text-3xl">SEDANG TAYANG DI BIOSKOP</h1>
-			<div
-				class="grid w-full auto-cols-fr auto-rows-max grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-4"
-			>
-				{#each images as img}
-					<div>
-						<img
-							src={img?.src}
-							alt={img?.alt}
-							class="aspect-[9/13] w-full rounded-md object-cover shadow-md"
-						/>
-						<p class="mt-2 text-lg font-semibold md:text-xl">{img?.alt}</p>
-					</div>
-				{/each}
-			</div>
+			<h1 class="mb-4 text-lg font-extrabold md:text-3xl">SEDANG TAYANG DI BIOSKOP</h1>
+				<div class="flex items-start justify-start gap-6 overflow-x-scroll min-w-full snap-x snap-mandatory">
+					{#each images as img}
+						<div class="flex-1 snap-always snap-start">
+							<img
+								src={img?.src}
+								alt={img?.alt}
+								class="aspect-[9.2/13] h-auto max-w-max w-32 md:w-64 rounded-md object-cover shadow-lg"
+							/>
+							<p class="mt-2 text-md font-semibold md:text-xl">{img?.alt}</p>
+						</div>
+					{/each}
+				</div>
 		</section>
 	</div>
 </main>
