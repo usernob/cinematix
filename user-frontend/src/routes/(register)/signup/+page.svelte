@@ -1,6 +1,11 @@
 <script lang="ts">
-	import { Label, Input, Button, A, Helper } from 'flowbite-svelte';
-	import { EyeOutline, EyeSlashOutline } from 'flowbite-svelte-icons';
+	import Label from 'flowbite-svelte/Label.svelte';
+	import Input from 'flowbite-svelte/Input.svelte';
+	import Button from 'flowbite-svelte/Button.svelte';
+	import Helper from 'flowbite-svelte/Helper.svelte';
+	import EyeOutline from 'flowbite-svelte-icons/EyeOutline.svelte';
+	import EyeSlashOutline from 'flowbite-svelte-icons/EyeSlashOutline.svelte';
+
 	let show: boolean = false;
 	let show2: boolean = false;
 
@@ -89,9 +94,9 @@
 		{/if}
 	</div>
 	<p class="mb-4">
-		Sudah punya akun? <A
-			href="/auth/login"
-			class="text-primary-700 hover:underline dark:text-primary-600">login sekarang</A
+		Sudah punya akun? <a
+			href="/login"
+			class="text-primary-700 hover:underline dark:text-primary-600">login sekarang</a
 		>
 	</p>
 	<Button type="submit" disabled={password !== passwordverif || password == '' || email == ''}

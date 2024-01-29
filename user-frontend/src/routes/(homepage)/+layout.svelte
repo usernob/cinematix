@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, DarkMode } from 'flowbite-svelte';
+	import Navbar from 'flowbite-svelte/Navbar.svelte';
+	import NavBrand from 'flowbite-svelte/NavBrand.svelte';
+	import NavLi from 'flowbite-svelte/NavLi.svelte';
+	import NavUl from 'flowbite-svelte/NavUl.svelte';
+	import NavHamburger from 'flowbite-svelte/NavHamburger.svelte';
+	import DarkMode from 'flowbite-svelte/DarkMode.svelte';
 </script>
 
 <div class="relative text-gray-700 dark:text-white">
@@ -13,8 +18,8 @@
 		<div class="flex md:order-2">
 			<DarkMode class="me-1 md:me-2" />
 			<a
-				href="/auth/signin"
-				class="text-primary-700 rounded-lg border-2 border-primary-700 px-4 py-2 text-sm font-medium"
+				href="/login"
+				class="rounded-lg border-2 border-primary-700 px-4 py-2 text-sm font-medium text-primary-700"
 				>Sign In</a
 			>
 			<NavHamburger class="ms-1 md:ms-3" />

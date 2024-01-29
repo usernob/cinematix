@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 input:focus-visible {
-  outline: none;
+	outline: none;
 }
