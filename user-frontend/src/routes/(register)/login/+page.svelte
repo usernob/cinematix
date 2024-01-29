@@ -14,7 +14,7 @@
 <svelte:head>
 	<title>Login</title>
 </svelte:head>
-<form action="">
+<form method="POST">
 	<h2 class="mb-8 text-2xl font-bold">Login</h2>
 	<div class="mb-6">
 		<Label for="email" class="text-md mb-2 block">Email</Label>
