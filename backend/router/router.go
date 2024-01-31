@@ -2,21 +2,39 @@ package router
 
 import (
 	"backend/controller"
+	"backend/router/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupRouter() *gin.Engine {
-  r := gin.Default()
-  r.Use()
+	r := gin.Default()
 
-  r.GET("/ping", controller.Ping)
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
+	r.Use(middleware.Cors())
 
-  // admin := r.Group("/admin")
+	r.GET("/ping", controller.Ping)
 
-  r.NoRoute(func(ctx *gin.Context) {
-    ctx.JSON(404, gin.H{"status": "404", "message": "Not Found"})
-  })
+  {
+    r.POST("/login", controller.Login)
+    r.POST("/register", controller.Register)
+  }
 
-  return r
+	admin := r.Group("/admin")
+  admin.Use(middleware.Jwt())
+  {
+    admin.GET("/user", func(ctx *gin.Context) {
+      ctx.JSON(200, gin.H{"status": "ok"})
+    })
+  }
+
+  user := r.Group("/user")
+  user.Use(middleware.Jwt())
+
+	r.NoRoute(func(ctx *gin.Context) {
+		ctx.JSON(404, gin.H{"status": "error", "message": "Not Found"})
+	})
+
+	return r
 }
