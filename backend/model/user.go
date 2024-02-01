@@ -30,14 +30,15 @@ func GetUserByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-func CreateUser(nama string, email string, password string) error {
-	res := db.Create(&User{
+func CreateUser(nama string, email string, password string) (*User, error) {
+  user := User{
     Nama:     nama,
     Email:    email,
     Password: password,  	
-	})
+  }
+	res := db.Create(&user)
 	if res.Error != nil {
-		return res.Error
+		return nil, res.Error
 	}
-	return nil
+	return &user, nil
 }

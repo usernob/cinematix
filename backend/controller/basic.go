@@ -2,6 +2,7 @@ package controller
 
 import (
 	"backend/model"
+	"backend/pkg/jwt"
 	"backend/pkg/passwordhash"
 	"net/http"
 
@@ -37,7 +38,14 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "ok", "data": user})
+	token, err := jwt.GenerateToken(user.ID, false)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	c.SetCookie("token", token, 3600, "/", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "data": token})
 }
 
 type RegisterRequest struct {
@@ -61,11 +69,18 @@ func Register(c *gin.Context) {
 
 	json.Password = passwordHased
 
-	insErr := model.CreateUser(json.Nama, json.Email, json.Password)
+	user, insErr := model.CreateUser(json.Nama, json.Email, json.Password)
 	if insErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"status": "ok", "data": json})
+	token, err := jwt.GenerateToken(user.ID, false)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		return
+	}
+
+	c.SetCookie("token", token, 3600, "/", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"status": "ok", "data": token})
 }

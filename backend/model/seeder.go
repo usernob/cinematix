@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func Seeder() {
+func Seed() {
 	pass, err := passwordhash.HashPassword("password")
 	if err != nil {
 		panic(err)

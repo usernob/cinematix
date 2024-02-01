@@ -44,8 +44,6 @@ func Migrate() {
   })
 }
 
-func SeedRefresh() {
+func Refresh() {
 	db.Migrator().DropTable(&User{}, &Admin{}, &Film{}, &Genre{}, &Penayangan{}, &Tiket{}, &Seat{}, &Kursi{}, &Audiotorium{})
-	Migrate()
-	Seeder()
 }
