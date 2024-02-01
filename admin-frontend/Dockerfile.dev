@@ -10,6 +10,4 @@ RUN npm ci
 
 COPY . .
 
-RUN npm run build
-
-CMD ["node", "build"]
+CMD ["npx", "vite", "dev", "--host"]
