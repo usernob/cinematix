@@ -3,10 +3,23 @@ package seeder
 import (
 	"backend/model"
 	"encoding/json"
+	"math/rand"
 	"time"
 )
 
 func seedFilmAndPenyangan() {
+	audiotorium := []model.Audiotorium{
+		{
+			Nama: "Audiotorium 1",
+		},
+		{
+			Nama: "Audiotorium 2",
+		},
+		{
+			Nama: "Audiotorium 3",
+		},
+	}
+	model.Db.Create(audiotorium)
 	type Films struct {
 		Results []struct {
 			ID          uint    `json:"id"`
@@ -28,22 +41,22 @@ func seedFilmAndPenyangan() {
 	json.Unmarshal([]byte(bodyString), &resFilms)
 
 	var films []model.Film
-	for _, film := range resFilms.Results {
-		// randomInt := rand.Intn(3)
+	for i, film := range resFilms.Results {
+		randomInt := rand.Intn(3)
 		tanggalRilis, err := time.Parse("2006-01-02", film.TangalRilis)
 		if err != nil {
 			panic(err)
 		}
 
-		// penyangan := []*model.Penayangan{}
-		// if i%randomInt == 0 {
-		// 	penyangan = append(penyangan, &model.Penayangan{
-		// 		AudiotoriumID: uint(randomInt % 3),
-		// 		Harga:         50000,
-		// 		Mulai:         time.Now(),
-		// 		Selesai:       time.Now().Add(time.Hour * 1),
-		// 	})
-		// }
+		penyangan := []*model.Penayangan{}
+		if randomInt == 2 {
+			penyangan = append(penyangan, &model.Penayangan{
+				AudiotoriumID: audiotorium[randomInt].ID,
+				Harga:         50000,
+				Mulai:         time.Now().Add(time.Hour * 24 * time.Duration(i)),
+				Selesai:       time.Now().Add(time.Hour*24*time.Duration(i) + time.Hour*2),
+			})
+		}
 
 		genres := []*model.Genre{}
 		for _, genreId := range film.GenreId {
@@ -59,7 +72,7 @@ func seedFilmAndPenyangan() {
 			Sinopsis:     film.Sinopsis,
 			PosterPath:   film.PosterPath,
 			Genre:        genres,
-			// Penayangan:   penyangan,
+			Penayangan:   penyangan,
 		})
 	}
 

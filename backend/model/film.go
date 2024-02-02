@@ -28,3 +28,11 @@ type Genre struct {
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
+
+type FilmGenre struct {
+  FilmID    uint           `gorm:"primaryKey" json:"film_id"`
+  GenreID   uint           `gorm:"primaryKey" json:"genre_id"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
+}

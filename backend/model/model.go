@@ -28,6 +28,7 @@ func init() {
 }
 
 func Migrate() {
+  Db.SetupJoinTable(&Film{}, "Genres", &FilmGenre{})
 	Db.AutoMigrate(&User{}, &Admin{}, &Film{}, &Genre{}, &Audiotorium{}, &Penayangan{}, &Tiket{}, &Kursi{}, &Seat{})
 
 	hashedPassword, err := passwordhash.HashPassword(os.Getenv("SUPERADMIN_PASSWORD"))
@@ -45,5 +46,5 @@ func Migrate() {
 }
 
 func Refresh() {
-	Db.Migrator().DropTable(&User{}, &Admin{}, &Film{}, &Genre{}, &Penayangan{}, &Tiket{}, &Seat{}, &Kursi{}, &Audiotorium{})
+	Db.Migrator().DropTable(&User{}, &Admin{}, &Film{}, &Genre{}, &FilmGenre{}, &Penayangan{}, &Tiket{}, &Seat{}, &Kursi{}, &Audiotorium{})
 }
