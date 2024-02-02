@@ -3,21 +3,25 @@ package model
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"gorm.io/gorm"
 )
 
 type User struct {
-	gorm.Model
-	Nama     string
-	Email    string
-	Password string
-	Tiket    []*Tiket
+	ID        uint           `gorm:"primaryKey" json:"id"`
+	Nama      string         `json:"nama"`
+	Email     string         `json:"email" gorm:"unique;not null;index"`
+	Password  string         `json:"password"`
+	Tiket     []*Tiket       `json:"tiket,omitempty"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
 
 func GetUserByEmail(email string) (*User, error) {
 	var user User
-	res := db.Where("email = ?", email).First(&user)
+	res := Db.Where("email = ?", email).First(&user)
 
 	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		return nil, fmt.Errorf("user not found")
@@ -31,12 +35,12 @@ func GetUserByEmail(email string) (*User, error) {
 }
 
 func CreateUser(nama string, email string, password string) (*User, error) {
-  user := User{
-    Nama:     nama,
-    Email:    email,
-    Password: password,  	
-  }
-	res := db.Create(&user)
+	user := User{
+		Nama:     nama,
+		Email:    email,
+		Password: password,
+	}
+	res := Db.Create(&user)
 	if res.Error != nil {
 		return nil, res.Error
 	}

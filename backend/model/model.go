@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
+var Db *gorm.DB
 
 func init() {
 	var err error
@@ -20,7 +20,7 @@ func init() {
 		os.Getenv("POSTGRES_PASSWORD"),
 		os.Getenv("POSTGRES_DB"),
 	)
-	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	Db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
 		panic("failed to connect database")
@@ -28,22 +28,22 @@ func init() {
 }
 
 func Migrate() {
-	db.AutoMigrate(&User{}, &Admin{}, &Film{}, &Genre{}, &Audiotorium{}, &Penayangan{}, &Tiket{}, &Kursi{}, &Seat{})
+	Db.AutoMigrate(&User{}, &Admin{}, &Film{}, &Genre{}, &Audiotorium{}, &Penayangan{}, &Tiket{}, &Kursi{}, &Seat{})
 
-  hashedPassword, err := passwordhash.HashPassword(os.Getenv("SUPERADMIN_PASSWORD"))
+	hashedPassword, err := passwordhash.HashPassword(os.Getenv("SUPERADMIN_PASSWORD"))
 
-  if err != nil {
-    panic(err)
-  }
+	if err != nil {
+		panic(err)
+	}
 
-  db.Create(&Admin{
-    Nama: os.Getenv("SUPERADMIN_NAME"),
-    Email: os.Getenv("SUPERADMIN_EMAIL"),
-    Password: hashedPassword,
-    Role: "superadmin",
-  })
+	Db.Create(&Admin{
+		Nama:     os.Getenv("SUPERADMIN_NAME"),
+		Email:    os.Getenv("SUPERADMIN_EMAIL"),
+		Password: hashedPassword,
+		Role:     "superadmin",
+	})
 }
 
 func Refresh() {
-	db.Migrator().DropTable(&User{}, &Admin{}, &Film{}, &Genre{}, &Penayangan{}, &Tiket{}, &Seat{}, &Kursi{}, &Audiotorium{})
+	Db.Migrator().DropTable(&User{}, &Admin{}, &Film{}, &Genre{}, &Penayangan{}, &Tiket{}, &Seat{}, &Kursi{}, &Audiotorium{})
 }

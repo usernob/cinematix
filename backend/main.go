@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/model"
+	"backend/model/seeder"
 	"backend/router"
 	"flag"
 )
@@ -20,7 +21,7 @@ func main() {
 	if refreshSeed {
 		model.Refresh()
 		model.Migrate()
-		model.Seed()
+		seeder.Seed()
 		return
 	}
 
@@ -35,8 +36,8 @@ func main() {
 	}
 
 	if seed {
-		model.Seed()
-    return
+		seeder.Seed()
+		return
 	}
 
 	r := router.SetupRouter()
