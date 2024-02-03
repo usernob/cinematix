@@ -18,7 +18,7 @@ type Claims struct {
 func GenerateToken(userId uint, isAdmin bool) (string, error) {
   claims := Claims{
     StandardClaims: jwt.StandardClaims{
-      Issuer: fmt.Sprintf("%s/backend", os.Getenv("APP_NAME")),
+      Issuer: fmt.Sprintf("%s/backend", os.Getenv("PUBLIC_APP_NAME")),
       ExpiresAt: time.Now().Add(time.Hour * 24).Unix(),
     },
     UserId: userId,

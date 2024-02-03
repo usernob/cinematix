@@ -9,6 +9,7 @@ import (
 type Penayangan struct {
 	ID            uint           `gorm:"primaryKey" json:"id"`
 	FilmID        uint           `json:"film_id"`
+  Film          *Film          `json:"film,omitempty"`
 	AudiotoriumID uint           `json:"audiotorium_id"`
 	Harga         uint           `json:"harga"`
 	Mulai         time.Time      `json:"mulai"`

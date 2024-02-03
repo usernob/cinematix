@@ -15,6 +15,20 @@ func Ping(c *gin.Context) {
 	})
 }
 
+
+const (
+  Ok string = "ok"
+  Error string = "error"
+)
+
+func Response(status string, message string, data interface{}) gin.H {
+  return gin.H{
+    "status":  status,
+    "message": message,
+    "data":    data,
+  }
+}
+
 type LoginRequest struct {
 	Email    string `json:"email" binding:"required"`
 	Password string `json:"password" binding:"required"`
@@ -23,29 +37,29 @@ type LoginRequest struct {
 func Login(c *gin.Context) {
 	var json LoginRequest
 	if err := c.ShouldBindJSON(&json); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+		c.JSON(http.StatusBadRequest, Response(Error, err.Error(), nil))
 		return
 	}
 
 	user, err := model.GetUserByEmail(json.Email)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"status": "error", "message": "Email not found"})
+		c.JSON(http.StatusNotFound, Response(Error, err.Error(), nil))
 		return
 	}
 
 	if !passwordhash.CheckPasswordHash(json.Password, user.Password) {
-		c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Wrong password"})
+		c.JSON(http.StatusUnauthorized, Response(Error, "Wrong email or password", nil))
 		return
 	}
 
 	token, err := jwt.GenerateToken(user.ID, false)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, Response(Error, err.Error(), nil))
 		return
 	}
 
 	c.SetCookie("token", token, 3600, "/", "", false, true)
-	c.JSON(http.StatusOK, gin.H{"status": "ok", "data": token})
+  c.JSON(http.StatusOK, Response(Ok, "Success login", map[string]string{"token": token}))
 }
 
 type RegisterRequest struct {
@@ -57,13 +71,13 @@ type RegisterRequest struct {
 func Register(c *gin.Context) {
 	var json RegisterRequest
 	if err := c.ShouldBindJSON(&json); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": err.Error()})
+		c.JSON(http.StatusBadRequest, Response(Error, err.Error(), nil))
 		return
 	}
 
 	passwordHased, err := passwordhash.HashPassword(json.Password)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, Response(Error, err.Error(), nil))
 		return
 	}
 
@@ -71,16 +85,16 @@ func Register(c *gin.Context) {
 
 	user, insErr := model.CreateUser(json.Nama, json.Email, json.Password)
 	if insErr != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, Response(Error, insErr.Error(), nil))
 		return
 	}
 
 	token, err := jwt.GenerateToken(user.ID, false)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"status": "error", "message": err.Error()})
+		c.JSON(http.StatusInternalServerError, Response(Error, err.Error(), nil))
 		return
 	}
 
 	c.SetCookie("token", token, 3600, "/", "", false, true)
-	c.JSON(http.StatusOK, gin.H{"status": "ok", "data": token})
+	c.JSON(http.StatusOK, Response(Ok, "Success register", map[string]string{"token": token}))
 }

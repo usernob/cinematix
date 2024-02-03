@@ -15,6 +15,11 @@ services:
     volumes:
       - /app/node_modules/
       - ./user-frontend:/app
+    environment:
+      PUBLIC_APP_NAME: '${PUBLIC_APP_NAME:-cinematix}'
+      PUBLIC_API_BASE_URL: '${PUBLIC_API_BASE_URL:-http://localhost:4000}'
+    networks:
+        - ukk-network
 
   admin-frontend:
     container_name: admin-frontend
@@ -30,6 +35,11 @@ services:
     volumes:
       - /app/node_modules/
       - ./admin-frontend:/app
+    environment:
+      PUBLIC_APP_NAME: '${PUBLIC_APP_NAME:-cinematix}'
+      PUBLIC_API_BASE_URL: '${PUBLIC_API_BASE_URL:-http://localhost:4000}'
+    networks:
+        - ukk-network
 
   backend:
     restart: on-failure
@@ -39,7 +49,7 @@ services:
       context: ./backend
       dockerfile: ${DOCKERFILE:-Dockerfile}
     environment:
-      APP_NAME: '${APP_NAME:-cinematix}'
+      PUBLIC_APP_NAME: '${PUBLIC_APP_NAME:-cinematix}'
       TMDB_API_KEY: '${TMDB_API_KEY:-12345}'
       TMDB_API_BASE_URL: '${TMDB_API_BASE_URL:-https://api.themoviedb.org/3}'
       TMDB_API_IMAGE_BASE_URL: '${TMDB_API_IMAGE_BASE_URL:-https://image.tmdb.org/t/p}'
@@ -52,12 +62,16 @@ services:
       SUPERADMIN_PASSWORD: '${SUPERADMIN_PASSWORD:-admin}'
       JWT_SIGNATURE_SECRET: '${JWT_SIGNATURE_SECRET:-12345}'
     ports:
-      - 6000:4000
+      - 8823:4000
+    expose:
+      - 4000
     depends_on:
       db:
         condition: service_healthy
     volumes:
         - ./backend:/app
+    networks:
+        - ukk-network
 
   db:
     image: postgres:16-alpine
@@ -73,8 +87,13 @@ services:
       retries: 10
     volumes:
       - 'pgdata:/var/lib/postgresql/data'
+    networks:
+        - ukk-network
+
 volumes:
   pgdata:
     driver: local
 
-
+networks:
+  ukk-network:
+    driver: bridge
