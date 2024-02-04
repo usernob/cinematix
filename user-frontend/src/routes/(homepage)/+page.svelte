@@ -1,76 +1,23 @@
 <script lang="ts">
 	import Carousel from 'flowbite-svelte/Carousel.svelte';
 	import AngleRightSolid from 'flowbite-svelte-icons/AngleRightSolid.svelte';
-	import { onMount } from 'svelte';
+	import type { Film } from '$lib/types/modelTypes';
 	import type { HTMLImgAttributes } from 'svelte/elements';
-
-	let resdata: { message: string; status: string; data: Array<any> };
-	// let images: HTMLImgAttributes[];
 
 	const getFilmTayang = async () => {
 		const tayang = await fetch(`http://localhost:8823/films/tayang`);
 		const akanTayang = await fetch(`http://localhost:8823/films/akan-tayang`);
-		// const item = await res.json();
 
-		const dataTayang = await tayang.json();
-		const dataAkanTayang = await akanTayang.json();
-		return { dataTayang, dataAkanTayang };
-
-		// if (data.status !== 'success' || !data.data) {
-		// 	images = [];
-		//     return
-		// }
-
-		// images = data.data.map((item: any) => {
-		// 	return {
-		// 		alt: item.title,
-		// 		src: item.poster_path,
-		// 	};
-		// });
+		const dataTayang: { data: Film[] } = await tayang.json();
+		const dataAkanTayang: { data: Film[] } = await akanTayang.json();
+		const images = dataAkanTayang.data.map((item: Film) => {
+			return {
+				src: `https://image.tmdb.org/t/p/original/${item?.poster_path}`,
+				alt: item?.title,
+			};
+		});
+		return { dataTayang, dataAkanTayang, images };
 	};
-
-	let images = [
-		{
-			alt: 'Cosmic timetraveler',
-			src: 'https://source.unsplash.com/1600x900/?beach',
-			title: 'cosmic-timetraveler-pYyOZ8q7AII-unsplash.com',
-		},
-		{
-			alt: 'Cristina Gottardi',
-			src: 'https://source.unsplash.com/1600x900/?computer',
-			title: 'cristina-gottardi-CSpjU6hYo_0-unsplash.com',
-		},
-		{
-			alt: 'Johannes Plenio',
-			src: 'https://source.unsplash.com/1600x900/?people',
-			title: 'johannes-plenio-RwHv7LgeC7s-unsplash.com',
-		},
-		{
-			alt: 'Jonatan Pie',
-			src: 'https://source.unsplash.com/1600x900/?lanscape',
-			title: 'jonatan-pie-3l3RwQdHRHg-unsplash.com',
-		},
-		{
-			alt: 'Mark Harpur',
-			src: 'https://source.unsplash.com/1600x900/?monk',
-			title: 'mark-harpur-K2s_YE031CA-unsplash',
-		},
-		{
-			alt: 'Pietro De Grandi',
-			src: 'https://source.unsplash.com/1600x900/?rain',
-			title: 'pietro-de-grandi-T7K4aEPoGGk-unsplash',
-		},
-		{
-			alt: 'Sergey Pesterev',
-			src: 'https://source.unsplash.com/1600x900/?sea',
-			title: 'sergey-pesterev-tMvuB9se2uQ-unsplash',
-		},
-		{
-			alt: 'Solo travel goals',
-			src: 'https://source.unsplash.com/1600x900/?city',
-			title: 'solotravelgoals-7kLufxYoqWk-unsplash',
-		},
-	];
 
 	let image: HTMLImgAttributes;
 </script>
@@ -80,7 +27,7 @@
 		<p>loading...</p>
 	{:then data}
 		<Carousel
-			{images}
+			images={data.images}
 			duration={10000}
 			let:Controls
 			let:Indicators
@@ -91,8 +38,8 @@
 				class="absolute inset-x-0 inset-y-16 bottom-0 flex flex-col items-start justify-end bg-gradient-to-t from-gray-800 to-transparent pb-10 dark:from-gray-900"
 			>
 				<div class="container text-white">
-					<h2 class="text-lg font-bold md:text-3xl">{image?.title}</h2>
-					<p class="text-sm">By {image?.alt}</p>
+					<h2 class="text-lg font-bold md:text-5xl">{image?.alt}</h2>
+					<!-- <p class="text-sm">By {image?.alt}</p> -->
 				</div>
 			</div>
 			<Indicators let:Indicator let:selected>
@@ -103,7 +50,12 @@
 
 		<div class="container mt-8 md:mt-16">
 			<section>
-				<h1 class="mb-4 text-lg font-extrabold md:text-3xl">SEDANG TAYANG</h1>
+				<div class="flex items-center justify-between">
+					<h1 class="mb-4 text-lg font-extrabold md:text-3xl">SEDANG TAYANG</h1>
+					<a href="/film" class="hidden text-sm font-semibold sm:block md:text-lg"
+						>Lihat lainnya -></a
+					>
+				</div>
 				<div
 					class="flex min-w-full snap-x snap-mandatory items-start justify-start gap-6 overflow-x-scroll"
 				>
@@ -132,7 +84,12 @@
 		</div>
 		<div class="container mt-8 md:mt-16">
 			<section>
-				<h1 class="mb-4 text-lg font-extrabold md:text-3xl">COMING SOON</h1>
+				<div class="flex items-center justify-between">
+					<h1 class="mb-4 text-lg font-extrabold md:text-3xl">COMING SOON</h1>
+					<a href="/film" class="hidden text-sm font-semibold sm:block md:text-lg"
+						>Lihat lainnya -></a
+					>
+				</div>
 				<div
 					class="flex min-w-full snap-x snap-mandatory items-start justify-start gap-6 overflow-x-scroll"
 				>

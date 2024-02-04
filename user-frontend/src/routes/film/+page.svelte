@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { PUBLIC_APP_NAME } from "$env/static/public";
+
 	const loadData = async () => {
 		const res = await fetch('http://localhost:8823/films');
 		const data = await res.json();
@@ -11,7 +13,7 @@
 		{#await loadData()}
 			<p>Loading...</p>
 		{:then data}
-			<h1 class="mb-4 text-lg font-extrabold md:text-3xl">SEDANG TAYANG DI BIOSKOP</h1>
+			<h1 class="mb-4 text-lg font-extrabold md:text-3xl">{PUBLIC_APP_NAME.toUpperCase()} FEATURED</h1>
 			<div class="grid auto-cols-fr grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-5">
 				{#each data.data as img}
 					<a href="/film/{img.id}">
