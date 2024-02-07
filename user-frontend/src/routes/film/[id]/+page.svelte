@@ -3,17 +3,19 @@
 	import Button from 'flowbite-svelte/Button.svelte';
 	import Rating from 'flowbite-svelte/Rating.svelte';
 	import Badge from 'flowbite-svelte/Badge.svelte';
+	import { routeApi } from '@/lib/util.js';
+	import type { PageData } from './$types';
 
-	export let data;
+	export let data: PageData;
 
 	type FilmData = Film & {
 		genre: Genre[];
 		penayangan: Penyangan[];
 	};
 	const loadData = async () => {
-		const res = await fetch(`http://localhost:8823/films/${data.id}`);
+		const res = await fetch(routeApi(`films/${data.id}`));
 		const resdata = await res.json();
-		const firstData: FilmData = resdata.data[0];
+		const firstData: FilmData = resdata.data;
 
 		let jadwal: { date: string; time: { id: number; mulai: string; selesai: string }[] }[] = [];
 		if (firstData) {
@@ -50,7 +52,6 @@
 					}
 					jadwal.push({ date: localeDate, time: [extractedItem] });
 				}
-				console.log(jadwal);
 			});
 		}
 		return { resdata: firstData, jadwal };
@@ -64,7 +65,7 @@
 		<div class="container flex flex-col gap-4 pt-10 md:flex-row md:gap-8">
 			<div>
 				<img
-					src={`https://image.tmdb.org/t/p/w500/${data.resdata?.poster_path}`}
+					src={routeApi(data.resdata?.poster_path)}
 					alt={data.resdata?.title}
 					class="aspect-[9.2/13] h-auto w-52 max-w-max rounded-lg object-cover shadow-lg md:w-80 lg:w-96"
 				/>
@@ -94,7 +95,7 @@
 							<h3 class="text-md mt-4 font-semibold md:text-xl mb-2">{jadwal.date}</h3>
 							<div class="flex flex-wrap items-center justify-start gap-2">
 								{#each jadwal.time as time}
-									<Button href="/film/{data.resdata?.id}/penyangan/{time.id}">{time.mulai}</Button>
+									<Button href="/film/{data.resdata?.id}/pesan/{time.id}">{time.mulai}</Button>
 								{/each}
 							</div>
 						</div>

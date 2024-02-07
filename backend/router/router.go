@@ -3,6 +3,7 @@ package router
 import (
 	"backend/controller"
 	filmcontroller "backend/controller/filmController"
+	usercontroller "backend/controller/userController"
 	"backend/router/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -20,8 +21,8 @@ func SetupRouter() *gin.Engine {
 	r.GET("/ping", controller.Ping)
 
   {
-    r.POST("/login", controller.Login)
-    r.POST("/register", controller.Register)
+    r.POST("/login/user", controller.UserLogin)
+    r.POST("/register/user", controller.UserRegister)
     r.GET("/films/tayang", filmcontroller.FilmTayang)
     r.GET("/films/akan-tayang", filmcontroller.FilmAkanTayang)
     r.GET("/films", filmcontroller.FilmList)
@@ -38,6 +39,9 @@ func SetupRouter() *gin.Engine {
 
   user := r.Group("/user")
   user.Use(middleware.Jwt())
+  {
+    user.GET("/info", usercontroller.GetUserInformation)
+  }
 
 	r.NoRoute(func(ctx *gin.Context) {
 		ctx.JSON(404, gin.H{"status": "error", "message": "Not Found"})

@@ -3,16 +3,18 @@
 	import AngleRightSolid from 'flowbite-svelte-icons/AngleRightSolid.svelte';
 	import type { Film } from '$lib/types/modelTypes';
 	import type { HTMLImgAttributes } from 'svelte/elements';
+	import { PUBLIC_API_BASE_URL, PUBLIC_APP_NAME } from '$env/static/public';
+	import { routeApi } from '@/lib/util';
 
 	const getFilmTayang = async () => {
-		const tayang = await fetch(`http://localhost:8823/films/tayang`);
-		const akanTayang = await fetch(`http://localhost:8823/films/akan-tayang`);
+		const tayang = await fetch(routeApi('films/tayang'));
+		const akanTayang = await fetch(routeApi('films/akan-tayang'));
 
 		const dataTayang: { data: Film[] } = await tayang.json();
 		const dataAkanTayang: { data: Film[] } = await akanTayang.json();
 		const images = dataAkanTayang.data.map((item: Film) => {
 			return {
-				src: `https://image.tmdb.org/t/p/original/${item?.poster_path}`,
+				src: routeApi(item?.poster_path),
 				alt: item?.title,
 			};
 		});
@@ -22,6 +24,9 @@
 	let image: HTMLImgAttributes;
 </script>
 
+<svelte:head>
+	<title>{PUBLIC_APP_NAME.toUpperCase()} - Home</title>
+</svelte:head>
 <main class="w-full">
 	{#await getFilmTayang()}
 		<p>loading...</p>
@@ -62,7 +67,7 @@
 					{#each data.dataTayang.data as img}
 						<a class="w-32 snap-start snap-always md:w-64" href="/film/{img?.id}">
 							<img
-								src={`https://image.tmdb.org/t/p/original${img?.poster_path}`}
+								src={routeApi(img.poster_path)}
 								alt={img?.title}
 								class="aspect-[9.2/13] h-auto w-32 max-w-max rounded-md object-cover shadow-lg md:w-64"
 							/>
@@ -96,7 +101,7 @@
 					{#each data.dataAkanTayang.data as img}
 						<a class="w-32 snap-start snap-always md:w-64" href="/film/{img?.id}">
 							<img
-								src={`https://image.tmdb.org/t/p/original${img?.poster_path}`}
+								src={routeApi(img.poster_path)}
 								alt={img?.title}
 								class="aspect-[9.2/13] h-auto w-32 max-w-max rounded-md object-cover shadow-lg md:w-64"
 							/>

@@ -12,7 +12,7 @@ type Admin struct {
 	Nama      string         `json:"nama"`
 	Email     string         `json:"email" gorm:"unique;not null;index"`
 	Password  string         `json:"password"`
-	Role      Role           `sql:"type:role" json:"role"`
+	Role      Role           `sql:"type:role" json:"role" gorm:"default:admin"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
@@ -33,3 +33,28 @@ const (
 	SuperAdminRole Role = "superadmin"
 	AdminRole      Role = "admin"
 )
+
+
+func GetAdminByEmail(email string) (*Admin, error) {
+	var admin Admin
+	res := Db.Where("email = ?", email).First(&admin)
+
+	if res.Error != nil {
+		return nil, res.Error
+	}
+
+	return &admin, nil
+}
+
+func CreateAdmin(nama string, email string, password string) (*Admin, error) {
+  admin := Admin{
+    Nama:     nama,
+    Email:    email,
+    Password: password,
+  }
+  res := Db.Create(&admin)
+  if res.Error != nil {
+    return nil, res.Error
+  }
+  return &admin, nil
+}

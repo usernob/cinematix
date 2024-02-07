@@ -5,20 +5,38 @@
 	import Helper from 'flowbite-svelte/Helper.svelte';
 	import EyeOutline from 'flowbite-svelte-icons/EyeOutline.svelte';
 	import EyeSlashOutline from 'flowbite-svelte-icons/EyeSlashOutline.svelte';
+	import type { ActionData } from '../login/$types';
+	import { applyAction, enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import { session } from '@/lib/stores/session';
 
 	let show: boolean = false;
 	let show2: boolean = false;
 
-	let username: string = '';
-	let email: string = '';
-	let password: string = '';
+	let username: string | FormDataEntryValue = '';
+	let email: string | FormDataEntryValue = '';
+	let password: string | FormDataEntryValue = '';
 	let passwordverif: string = '';
+
+	export let form: ActionData;
 </script>
 
 <svelte:head>
 	<title>Create Account</title>
 </svelte:head>
-<form action="">
+<form
+	method="POST"
+	use:enhance={() =>
+		async ({ result }) => {
+			await applyAction(result);
+
+			if (result.type === 'success') {
+				const user = result.data?.user;
+				if (user) $session.user = user;
+				await goto('/user');
+			}
+		}}
+>
 	<h2 class="mb-8 text-2xl font-bold">Create Account</h2>
 	<div class="mb-6">
 		<Label for="username" class="text-md mb-2 block">Username</Label>
@@ -93,6 +111,11 @@
 			<Helper color="red">Password harus sama</Helper>
 		{/if}
 	</div>
+	{#if form?.incorrect}
+		<div class="text-md mb-2 block w-full rounded-lg border-2 border-red-400 bg-red-400/30 p-2.5">
+			<p class="text-red-500">Email sudah terdaftar</p>
+		</div>
+	{/if}
 	<p class="mb-4">
 		Sudah punya akun? <a
 			href="/login"

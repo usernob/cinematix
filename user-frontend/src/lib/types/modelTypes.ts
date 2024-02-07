@@ -13,7 +13,7 @@ export type Genre = {
   nama: string;
 };
 
-export type Penyangan = {
+export type Penayangan = {
   id: number,
   film_id: number,
   auditorium_id: number,
@@ -49,8 +49,8 @@ export type Seat = {
 export type User = {
   id: number,
   nama: string,
-  username: string,
-  password: string,
+  email: string,
+  password?: string,
 }
 
 

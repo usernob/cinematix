@@ -42,14 +42,14 @@ func seedFilmAndPenyangan() {
 
 	var films []model.Film
 	for i, film := range resFilms.Results {
-		randomInt := rand.Intn(3)
+		randomInt := rand.Intn(2)
 		tanggalRilis, err := time.Parse("2006-01-02", film.TangalRilis)
 		if err != nil {
 			panic(err)
 		}
 
 		penyangan := []*model.Penayangan{}
-		if randomInt == 2 {
+		if randomInt == 1 {
 			penyangan = append(penyangan, &model.Penayangan{
 				AudiotoriumID: audiotorium[randomInt].ID,
 				Harga:         50000,
@@ -64,13 +64,18 @@ func seedFilmAndPenyangan() {
 			genres = append(genres, &genre)
 		}
 
+		downloadPath, err := downloadPoster(film.PosterPath)
+		if err != nil {
+			panic(err)
+		}
+
 		films = append(films, model.Film{
 			ID:           film.ID,
 			Title:        film.Title,
 			TanggalRilis: tanggalRilis,
 			Rating:       film.Rating,
 			Sinopsis:     film.Sinopsis,
-			PosterPath:   film.PosterPath,
+			PosterPath:   downloadPath,
 			Genre:        genres,
 			Penayangan:   penyangan,
 		})

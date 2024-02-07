@@ -1,13 +1,17 @@
 <script lang="ts">
 	import { PUBLIC_APP_NAME } from "$env/static/public";
+  import {routeApi} from "$lib/util"
 
 	const loadData = async () => {
-		const res = await fetch('http://localhost:8823/films');
+		const res = await fetch(routeApi("films"));
 		const data = await res.json();
 		return { data: data.data };
 	};
 </script>
 
+<svelte:head>
+	<title>{PUBLIC_APP_NAME.toUpperCase()} - Film</title>
+</svelte:head>
 <div class="container mt-8 md:mt-16">
 	<section>
 		{#await loadData()}
@@ -18,7 +22,7 @@
 				{#each data.data as img}
 					<a href="/film/{img.id}">
 						<img
-							src={`https://image.tmdb.org/t/p/w500/${img?.poster_path}`}
+							src={routeApi(img?.poster_path)}
 							alt={img?.title}
 							class="aspect-[9.2/13] h-auto w-full rounded-lg object-cover shadow-lg md:w-64"
 						/>

@@ -1,8 +1,6 @@
 package model
 
 import (
-	"errors"
-	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -23,16 +21,21 @@ func GetUserByEmail(email string) (*User, error) {
 	var user User
 	res := Db.Where("email = ?", email).First(&user)
 
-	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-		return nil, fmt.Errorf("user not found")
-	}
-
 	if res.Error != nil {
 		return nil, res.Error
 	}
 
 	return &user, nil
 }
+
+func GetUserBy(user User) (*User, error) {
+  res := Db.Where(&user).First(&user)
+  if res.Error != nil {
+    return nil, res.Error
+  }
+  return &user, nil
+}
+
 
 func CreateUser(nama string, email string, password string) (*User, error) {
 	user := User{
