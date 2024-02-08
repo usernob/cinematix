@@ -28,7 +28,7 @@ func SetupRouter() *gin.Engine {
     r.GET("/films/akan-tayang", filmcontroller.FilmAkanTayang)
     r.GET("/films", filmcontroller.FilmList)
     r.GET("/films/:id", filmcontroller.FilmDetailPenyangan)
-    r.GET("/pesan/:penayangan_id", penasanancontroller.ShowKursi)
+    r.GET("/kursi/:penayangan_id", penasanancontroller.ShowKursi)
   }
 
 	admin := r.Group("/admin")

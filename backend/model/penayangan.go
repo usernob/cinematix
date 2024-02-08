@@ -51,13 +51,6 @@ func GetKursi(penayanganId uint) ([]*Kursi, error) {
 		return nil, err
 	}
 
-	fmt.Println(Db.ToSQL(func(tx *gorm.DB) *gorm.DB {
-
-		return tx.Preload("Seat", "tiket_id IN (?)", Db.Model(&Tiket{}).Select("id").Where("penayangan_id = ?", penayangan.ID)).
-			Where("audiotorium_id = ?", penayangan.AudiotoriumID).
-			Find(&kursi)
-
-	}))
 	res := Db.Preload("Seat", "tiket_id IN (?)", Db.Model(&Tiket{}).Select("id").Where("penayangan_id = ?", penayangan.ID)).
 		Where("audiotorium_id = ?", penayangan.AudiotoriumID).
 		Find(&kursi)

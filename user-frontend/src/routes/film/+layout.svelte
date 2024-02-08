@@ -4,8 +4,10 @@
 	import ArrowLeftSolid from 'flowbite-svelte-icons/ArrowLeftSolid.svelte';
 	import { page } from '$app/stores';
 	import { PUBLIC_APP_NAME } from '$env/static/public';
-
-	$: title = $page.data?.title || 'Films';
+	let title: string = 'Films';
+	$: {
+    title = $page.data?.title || 'Films'
+  }
 </script>
 
 <svelte:head>
