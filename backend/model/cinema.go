@@ -33,3 +33,5 @@ func (k *Kursi) TableName() string {
 func (a *Audiotorium) TableName() string {
 	return "audiotorium"
 }
+
+

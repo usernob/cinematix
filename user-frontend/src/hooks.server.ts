@@ -15,7 +15,7 @@ const mustUnprotect = ['/login'];
 
 export const handle: Handle = async ({ event, resolve }) => {
   const token = event.cookies.get('token');
-  console.log({ token });
+
   if (!token && protectedRoutes.includes(event.url.pathname)) {
     throw redirect(302, '/login');
   }

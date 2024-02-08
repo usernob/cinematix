@@ -51,7 +51,7 @@ func seedFilmAndPenyangan() {
 		penyangan := []*model.Penayangan{}
 		if randomInt == 1 {
 			penyangan = append(penyangan, &model.Penayangan{
-				AudiotoriumID: audiotorium[randomInt].ID,
+				AudiotoriumID: audiotorium[rand.Intn(3)].ID,
 				Harga:         50000,
 				Mulai:         time.Now().Add(time.Hour * 24 * time.Duration(i)),
 				Selesai:       time.Now().Add(time.Hour*24*time.Duration(i) + time.Hour*2),

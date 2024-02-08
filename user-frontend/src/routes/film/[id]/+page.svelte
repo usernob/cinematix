@@ -1,25 +1,28 @@
 <script lang="ts">
-	import type { Film, Genre, Penyangan } from '@/lib/types/modelTypes.js';
+	import type { Penayangan } from '@/lib/types/modelTypes.js';
 	import Button from 'flowbite-svelte/Button.svelte';
 	import Rating from 'flowbite-svelte/Rating.svelte';
 	import Badge from 'flowbite-svelte/Badge.svelte';
 	import { routeApi } from '@/lib/util.js';
 	import type { PageData } from './$types';
+	import type { ApiResponse } from '@/lib/types/apiResponse';
+	import { dataFilm, type FilmData } from '@/lib/stores/data';
 
 	export let data: PageData;
 
-	type FilmData = Film & {
-		genre: Genre[];
-		penayangan: Penyangan[];
-	};
+
 	const loadData = async () => {
 		const res = await fetch(routeApi(`films/${data.id}`));
-		const resdata = await res.json();
+		const resdata: ApiResponse<FilmData> = await res.json();
+    if (!res.ok) {
+      throw new Error(resdata.message);
+    }
 		const firstData: FilmData = resdata.data;
+    dataFilm.set(firstData);
 
 		let jadwal: { date: string; time: { id: number; mulai: string; selesai: string }[] }[] = [];
 		if (firstData) {
-			firstData.penayangan.forEach((item: Penyangan) => {
+			firstData.penayangan.forEach((item: Penayangan) => {
 				const dateobj: Date = new Date(item.mulai);
 				const localeDate = dateobj.toLocaleString('id-ID', {
 					weekday: 'long',
@@ -92,7 +95,7 @@
 				<div class="flex flex-col justify-center">
 					{#each data.jadwal as jadwal}
 						<div>
-							<h3 class="text-md mt-4 font-semibold md:text-xl mb-2">{jadwal.date}</h3>
+							<h3 class="text-md mb-2 mt-4 font-semibold md:text-xl">{jadwal.date}</h3>
 							<div class="flex flex-wrap items-center justify-start gap-2">
 								{#each jadwal.time as time}
 									<Button href="/film/{data.resdata?.id}/pesan/{time.id}">{time.mulai}</Button>

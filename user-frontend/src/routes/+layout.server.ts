@@ -10,6 +10,11 @@ export async function load(event: LayoutServerLoadEvent) {
   if (!token) {
     return { user: null };
   }
+
+  if (event.locals?.user) {
+    return { user: event.locals.user };
+  }
+
   const getData = await fetch(routeApi('user/info'), {
     headers: { Authorization: `Bearer ${token}` },
   });

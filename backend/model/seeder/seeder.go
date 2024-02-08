@@ -98,4 +98,5 @@ func Seed() {
 
 	seedGenre()
 	seedFilmAndPenyangan()
+	seedCinema()
 }

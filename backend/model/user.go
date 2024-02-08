@@ -29,13 +29,12 @@ func GetUserByEmail(email string) (*User, error) {
 }
 
 func GetUserBy(user User) (*User, error) {
-  res := Db.Where(&user).First(&user)
-  if res.Error != nil {
-    return nil, res.Error
-  }
-  return &user, nil
+	res := Db.Where(&user).First(&user)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return &user, nil
 }
-
 
 func CreateUser(nama string, email string, password string) (*User, error) {
 	user := User{
