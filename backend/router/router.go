@@ -3,7 +3,7 @@ package router
 import (
 	"backend/controller"
 	filmcontroller "backend/controller/filmController"
-	penasanancontroller "backend/controller/penasananController"
+	kursicontroller "backend/controller/kursiController"
 	usercontroller "backend/controller/userController"
 	"backend/router/middleware"
 
@@ -27,8 +27,10 @@ func SetupRouter() *gin.Engine {
     r.GET("/films/tayang", filmcontroller.FilmTayang)
     r.GET("/films/akan-tayang", filmcontroller.FilmAkanTayang)
     r.GET("/films", filmcontroller.FilmList)
-    r.GET("/films/:id", filmcontroller.FilmDetailPenyangan)
-    r.GET("/kursi/:penayangan_id", penasanancontroller.ShowKursi)
+    r.GET("/films/:id", filmcontroller.FilmDetail)
+    r.GET("/films/:id/:penayangan_id", filmcontroller.FilmDetailPenayangan)
+    r.GET("/kursi/:penayangan_id", kursicontroller.ShowKursi)
+    r.GET("/kursi/:penayangan_id/:kursi_id", kursicontroller.CheckStatusKursi)
   }
 
 	admin := r.Group("/admin")

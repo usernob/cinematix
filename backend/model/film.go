@@ -80,3 +80,9 @@ func GetFilmDetail(id string) (Film, error) {
 	res := Db.Preload("Genre").Preload("Penayangan").Where("id = ?", id).First(&film)
 	return film, res.Error
 }
+
+func GetPenayanganSingle(id string, penayangan_id string) (Film, error) {
+  var film Film
+  res := Db.Preload("Genre").Preload("Penayangan", "id = ?", penayangan_id).Where("id = ?", id).First(&film)
+  return film, res.Error
+}

@@ -34,9 +34,21 @@ func FilmList(c *gin.Context) {
 	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
 }
 
-func FilmDetailPenyangan(c *gin.Context) {
+func FilmDetail(c *gin.Context) {
 	id := c.Param("id")
 	data, err := model.GetFilmDetail(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
+}
+
+func FilmDetailPenayangan(c *gin.Context) {
+  id := c.Param("id")
+  penayangan_id := c.Param("penayangan_id")
+  data, err := model.GetPenayanganSingle(id, penayangan_id)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
 		return

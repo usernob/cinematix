@@ -16,7 +16,7 @@ export type Genre = {
 export type Penayangan = {
   id: number,
   film_id: number,
-  auditorium_id: number,
+  audiotorium_id: number,
   harga: number,
   mulai: string,
   selesai: string,

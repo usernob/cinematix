@@ -2,6 +2,10 @@
 	import Navbar from 'flowbite-svelte/Navbar.svelte';
 	import NavBrand from 'flowbite-svelte/NavBrand.svelte';
 	import DarkMode from 'flowbite-svelte/DarkMode.svelte';
+	import Dropdown from 'flowbite-svelte/Dropdown.svelte';
+	import DropdownHeader from 'flowbite-svelte/DropdownHeader.svelte';
+	import DropdownItem from 'flowbite-svelte/DropdownItem.svelte';
+	import DropdownDivider from 'flowbite-svelte/DropdownDivider.svelte';
 	import { PUBLIC_APP_NAME } from '$env/static/public';
 	import type { PageData } from './$types';
 
@@ -9,7 +13,7 @@
 </script>
 
 <div class="relative text-gray-700 dark:text-white">
-	<Navbar class="fixed top-0 z-50">
+	<Navbar class="fixed top-0 z-50 px-0">
 		<NavBrand href="/">
 			<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
 				>{PUBLIC_APP_NAME.toLocaleUpperCase()}</span
@@ -18,7 +22,18 @@
 		<div class="flex md:order-2">
 			<DarkMode class="me-1 md:me-2" />
 			{#if data.user}
-				<a href="/user" class="font-semibold px-4 py-2">Hi, {data.user.nama}</a>
+				<div class="flex items-center md:order-2">
+					<p id="user-menu" class="cursor-pointer text-sm font-medium">Hi, {data.user.nama}</p>
+				</div>
+				<Dropdown placement="bottom" triggeredBy="#user-menu">
+					<DropdownHeader>
+						<span class="block truncate text-sm font-medium">{data.user.email}</span>
+					</DropdownHeader>
+					<DropdownItem>Dashboard</DropdownItem>
+					<DropdownItem>Settings</DropdownItem>
+					<DropdownDivider />
+					<DropdownItem>Log out</DropdownItem>
+				</Dropdown>
 			{:else}
 				<a
 					href="/login"
