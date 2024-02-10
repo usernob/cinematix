@@ -10,7 +10,7 @@ type Kursi struct {
 	ID            uint           `gorm:"primaryKey" json:"id"`
 	Nama          string         `json:"nama" gorm:"unique;not null;index"`
 	AudiotoriumID uint           `json:"audiotorium_id"`
-	Seat          []*Seat        `json:"seat,omitempty"`
+	Tiket         []*Tiket       `gorm:"many2many:seats" json:"tiket,omitempty"`
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"deleted_at"`
@@ -33,5 +33,3 @@ func (k *Kursi) TableName() string {
 func (a *Audiotorium) TableName() string {
 	return "audiotorium"
 }
-
-

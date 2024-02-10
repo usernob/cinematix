@@ -1,7 +1,7 @@
 package model
 
 import (
-	"fmt"
+	"backend/pkg/logjson"
 	"time"
 
 	"gorm.io/gorm"
@@ -25,15 +25,6 @@ func (p *Penayangan) TableName() string {
 	return "penayangan"
 }
 
-type Seat struct {
-	ID        uint           `gorm:"primaryKey" json:"id"`
-	KursiID   uint           `json:"kursi_id"`
-	TiketID   uint           `json:"tiket_id"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
-}
-
 func GetPenayangan(penayangan *Penayangan) (*Penayangan, error) {
 	res := Db.Find(penayangan)
 	if res.Error != nil {
@@ -46,15 +37,17 @@ func GetKursi(penayanganId uint) ([]*Kursi, error) {
 	var kursi []*Kursi
 	penayangan := &Penayangan{ID: penayanganId}
 	penayangan, err := GetPenayangan(penayangan)
-	fmt.Println(penayangan)
+  logjson.ToJSON(penayangan)
 	if err != nil {
 		return nil, err
 	}
 
-	res := Db.Preload("Seat", "tiket_id IN (?)", Db.Model(&Tiket{}).Select("id").Where("penayangan_id = ?", penayangan.ID)).
-		Where("audiotorium_id = ?", penayangan.AudiotoriumID).
-		Find(&kursi)
+  var tiket []Tiket
+  Db.Where("penayangan_id = ?", penayangan.ID).Find(&tiket)
+  logjson.ToJSON(tiket)
+  res := Db.Preload("Tiket", Db.Where("penayangan_id = ?", penayangan.ID)).Where("audiotorium_id = ?", penayangan.AudiotoriumID).Find(&kursi)
 
+  logjson.ToJSON(kursi)
 	if res.Error != nil {
 		return nil, res.Error
 	}

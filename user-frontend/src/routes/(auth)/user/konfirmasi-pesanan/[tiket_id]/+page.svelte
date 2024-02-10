@@ -5,6 +5,7 @@
 
 	export let data: PageData;
 	$: penayangan = data.dataFilm.penayangan[0];
+  $: seats = penayangan.tiket[0].kursi;
 	$: console.log(penayangan);
 </script>
 
@@ -27,7 +28,7 @@
 					<p>Total Harga</p>
 					<p>
 						{Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
-							penayangan.harga * data.seatPesanan.length
+							penayangan.harga * seats.length
 						)}
 					</p>
 
@@ -60,7 +61,7 @@
 					</p>
 
 					<p>Nomor Kursi</p>
-					<p>{data.seatPesanan.map((val) => val.nama).join(', ')}</p>
+					<p>{seats.map((val) => val.nama).join(', ')}</p>
 				</div>
 			</div>
 		</div>

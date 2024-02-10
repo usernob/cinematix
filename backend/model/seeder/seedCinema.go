@@ -24,14 +24,15 @@ func seedCinema() {
 }
 
 func seedTiketAndSeat() {
-	var tiket []model.Tiket
 	for i := 0; i < 6; i++ {
+		//
+		var kursi []*model.Kursi
+		var penayangan model.Penayangan
+		model.Db.Find(&penayangan, i+1)
+		model.Db.Where("audiotorium_id = ?", penayangan.AudiotoriumID).Find(&kursi)
 
-		var kursi model.Kursi
-		model.Db.Raw("SELECT * FROM kursi LEFT JOIN penayangan ON penayangan.audiotorium_id = kursi.audiotorium_id WHERE penayangan.id = ? LIMIT 1", i+1).Scan(&kursi)
-		var seats []*model.Seat
-		seats = append(seats, &model.Seat{KursiID: kursi.ID})
-		tiket = append(tiket, model.Tiket{TotalHarga: 10000, UserID: 1, PenayanganID: uint(i + 1), Seat: seats})
+    tiket := model.Tiket{TotalHarga: 100000, UserID: 1, PenayanganID: penayangan.ID}
+    model.Db.Create(&tiket)
+    model.Db.Model(&tiket).Association("Kursi").Append(kursi[2:6])
 	}
-	model.Db.Create(tiket)
 }

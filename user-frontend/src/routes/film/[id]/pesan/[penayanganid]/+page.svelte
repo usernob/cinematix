@@ -4,11 +4,11 @@
 	import ExclamationCircleOutline from 'flowbite-svelte-icons/ExclamationCircleOutline.svelte';
 	import type { PageData } from './$types';
 	import { dataFilm, seatPesanan } from '@/lib/stores/data';
-	import type { Kursi } from '@/lib/types/modelTypes';
-	import { get } from 'svelte/store';
+	import type { Kursi, Tiket } from '@/lib/types/modelTypes';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { routeApi } from '@/lib/util';
+	import type { ApiResponse } from '@/lib/types/apiResponse';
 
 	export let data: PageData;
 
@@ -17,7 +17,7 @@
 
 	let harga: number = 0;
 
-	let kursiDiPilih: Kursi[] = get(seatPesanan);
+	let kursiDiPilih: Kursi[] = [];
 
 	let excludeKursiId: number[] = [];
 
@@ -71,14 +71,36 @@
 		$seatPesanan = $seatPesanan.filter((val) => val.id !== id);
 	};
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (kursiDiPilih.length === 0) {
 			popupModal = true;
 			messageModal = 'Harap pilih setidaknya satu kursi';
 			return;
 		}
 
-		return goto('/user/konfirmasi-pesanan/' + data.penayanganid);
+		const postData = {
+			penayangan_id: parseInt(data.penayanganid),
+			kursis: kursiDiPilih,
+      total_harga: harga,
+			film_id: parseInt(data.filmid),
+		};
+
+		const res = await fetch(routeApi('user/pesanan/add'), {
+			body: JSON.stringify(postData),
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${data.token}`,
+			},
+		});
+
+		if (res.ok) {
+      const resData: ApiResponse<Tiket> = await res.json();
+			return goto('/user/konfirmasi-pesanan/' + resData.data.id);
+		} else {
+			popupModal = true;
+			messageModal = 'Gagal memesan film';
+		}
 	};
 
 	const excludeKursi = (id: number) => {
@@ -87,7 +109,7 @@
 
 	onMount(() => {
 		data.dataKursi.forEach((val) => {
-			if (val.seat?.length > 0) {
+			if (val.tiket?.length > 0) {
 				excludeKursi(val.id);
 			}
 		});

@@ -25,6 +25,7 @@ export type Penayangan = {
 export type Tiket = {
   id: number,
   penyangan_id: number,
+  total_harga:number,
   user_id: number,
   status_pembayaran: string,
 }

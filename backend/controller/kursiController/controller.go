@@ -43,7 +43,7 @@ func CheckStatusKursi(c *gin.Context) {
   }
 
   for _, value := range data {
-    if len(value.Seat) <= 0 {
+    if len(value.Tiket) <= 0 {
       continue
     }
 

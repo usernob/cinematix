@@ -45,6 +45,9 @@ func SetupRouter() *gin.Engine {
   user.Use(middleware.Jwt())
   {
     user.GET("/info", usercontroller.GetUserInformation)
+    user.POST("/pesanan/add", usercontroller.AddPesanan)
+    user.POST("/pesanan/update-pembayaran", usercontroller.UpdatePembayaran)
+    user.GET("/pesanan/:tiket_id", usercontroller.GetPesanan)
   }
 
 	r.NoRoute(func(ctx *gin.Context) {
