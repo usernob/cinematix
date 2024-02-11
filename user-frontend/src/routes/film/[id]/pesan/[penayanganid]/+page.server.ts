@@ -6,11 +6,10 @@ import type { ApiResponse } from '@/lib/types/apiResponse';
 import { get } from 'svelte/store';
 import { redirect } from '@sveltejs/kit';
 
-export const load: PageServerLoad = async ({ params, cookies }) => {
+export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
   const fetchKursi = await fetch(routeApi(`kursi/${params.penayanganid}`));
 
-  console.log(cookies.get("token"))
-  if(cookies.get("token") == undefined) {
+  if (cookies.get('token') == undefined) {
     throw redirect(302, '/login');
   }
 
@@ -40,7 +39,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
     });
 
     return {
-      token: cookies.get("token"),
+      token: cookies.get('token'),
       dataKursi: dataKursi.data,
       filmid: params.id,
       penayanganid: params.penayanganid,
@@ -57,7 +56,7 @@ export const load: PageServerLoad = async ({ params, cookies }) => {
   dataFilm.set(data.data);
 
   return {
-    token: cookies.get("token"),
+    token: cookies.get('token'),
     dataKursi: dataKursi.data,
     filmid: params.id,
     penayanganid: params.penayanganid,

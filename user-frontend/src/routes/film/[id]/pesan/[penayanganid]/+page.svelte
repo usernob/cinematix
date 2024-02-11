@@ -81,7 +81,7 @@
 		const postData = {
 			penayangan_id: parseInt(data.penayanganid),
 			kursis: kursiDiPilih,
-      total_harga: harga,
+			total_harga: harga,
 			film_id: parseInt(data.filmid),
 		};
 
@@ -95,7 +95,7 @@
 		});
 
 		if (res.ok) {
-      const resData: ApiResponse<Tiket> = await res.json();
+			const resData: ApiResponse<Tiket> = await res.json();
 			return goto('/user/konfirmasi-pesanan/' + resData.data.id);
 		} else {
 			popupModal = true;

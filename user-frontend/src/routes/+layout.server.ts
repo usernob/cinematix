@@ -15,17 +15,17 @@ export async function load(event: LayoutServerLoadEvent) {
     return { user: event.locals.user };
   }
 
-  const getData = await fetch(routeApi('user/info'), {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const getData = await event.fetch(routeApi('user/info'));
 
   const res: ApiResponse<User> = await getData.json();
 
   if (res.status === 'ok' || res.data) {
+    delete res.data.password
     event.locals.user = res.data;
   } else {
     throw redirect(302, '/login');
   }
+
   const user = event.locals?.user;
   if (!user) return { user: null };
   return { user };

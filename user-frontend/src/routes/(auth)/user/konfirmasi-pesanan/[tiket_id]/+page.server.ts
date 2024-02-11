@@ -3,22 +3,19 @@ import type { ApiResponse } from '@/lib/types/apiResponse';
 import { routeApi } from '@/lib/util';
 import type { Film, Kursi, Penayangan, Tiket } from '@/lib/types/modelTypes';
 
-export const load: PageServerLoad = async ({ params, cookies }) => {
-  const token = cookies.get('token');
+export const load: PageServerLoad = async ({ fetch, params }) => {
+  const res = await fetch(routeApi('user/pesanan/' + params.tiket_id));
 
-  const res = await fetch(routeApi('user/pesanan/' + params.tiket_id), {
-    method: 'GET',
-    credentials: 'include',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  type PenayanganTiket = Penayangan[] &
+    {
+      tiket: Tiket[] &
+      {
+        kursi: Kursi[];
+      }[];
+    }[];
 
-  const data: ApiResponse<
-    Film & { penayangan: Penayangan & { tiket: Tiket & { kursi: Kursi[] }[] }[] }
-  > = await res.json();
+  const data: ApiResponse<Film & { penayangan: PenayanganTiket }> = await res.json();
 
-  console.log(data.data.penayangan[0].tiket)
   return {
     dataFilm: data.data,
     title: 'Konfirmasi Pesanan',
