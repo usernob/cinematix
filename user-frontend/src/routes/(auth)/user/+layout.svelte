@@ -10,7 +10,7 @@
 </script>
 
 <svelte:head>
-  <title>{title}</title>
+	<title>{title}</title>
 </svelte:head>
 <div>
 	<Header {title} withHome={true} withArrowBack={arrowback} customBack="/user" user={data.user} />

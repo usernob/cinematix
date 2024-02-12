@@ -2,6 +2,7 @@ package router
 
 import (
 	"backend/controller"
+	admincontroller "backend/controller/adminController"
 	filmcontroller "backend/controller/filmController"
 	kursicontroller "backend/controller/kursiController"
 	usercontroller "backend/controller/userController"
@@ -25,6 +26,8 @@ func SetupRouter() *gin.Engine {
 	{
 		r.POST("/login/user", controller.UserLogin)
 		r.POST("/register/user", controller.UserRegister)
+		r.POST("/login/admin", controller.AdminLogin)
+		r.POST("/register/admin", controller.AdminRegister)
 		r.GET("/films/tayang", filmcontroller.FilmTayang)
 		r.GET("/films/akan-tayang", filmcontroller.FilmAkanTayang)
 		r.GET("/films", filmcontroller.FilmList)
@@ -37,9 +40,7 @@ func SetupRouter() *gin.Engine {
 	admin := r.Group("/admin")
 	admin.Use(middleware.Jwt())
 	{
-		admin.GET("/user", func(ctx *gin.Context) {
-			ctx.JSON(200, gin.H{"status": "ok"})
-		})
+		admin.GET("/info", admincontroller.GetAdminInformation)
 	}
 
 	user := r.Group("/user")

@@ -34,7 +34,7 @@
 <form
 	class="container max-w-[40rem]"
 	method="POST"
-  enctype="multipart/form-data"
+	enctype="multipart/form-data"
 	use:enhance={() =>
 		async ({ result }) => {
 			await applyAction(result);
@@ -42,7 +42,7 @@
 			if (result.type === 'success') {
 				const user = result.data?.user;
 				if (user) $session.user = user;
-        await invalidateAll()
+				await invalidateAll();
 				await goto('/user');
 			}
 		}}

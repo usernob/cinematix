@@ -21,14 +21,14 @@
 			>
 		</NavBrand>
 		<div class="flex md:order-2">
-			<DarkMode class="me-1 md:me-2" />
+			<DarkMode class="me-2" />
 			{#if data.user}
 				<div class="flex items-center md:order-2">
-        <Avatar id="user-menu" src={data.user.avatar ? routeApi(data.user.avatar) : ''}/>
+					<Avatar id="user-menu" src={data.user.avatar ? routeApi(data.user.avatar) : ''} />
 				</div>
 				<Dropdown placement="bottom" triggeredBy="#user-menu">
 					<DropdownHeader>
-					<span class="block truncate text-sm font-medium">{data.user.nama}</span>
+						<span class="block truncate text-sm font-medium">{data.user.nama}</span>
 						<span class="block truncate text-sm font-medium">{data.user.email}</span>
 					</DropdownHeader>
 					<DropdownItem><a href="/user">Dasboard</a></DropdownItem>

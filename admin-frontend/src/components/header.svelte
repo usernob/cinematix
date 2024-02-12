@@ -5,45 +5,26 @@
 	import Avatar from 'flowbite-svelte/Avatar.svelte';
 	import DropdownHeader from 'flowbite-svelte/DropdownHeader.svelte';
 	import DropdownItem from 'flowbite-svelte/DropdownItem.svelte';
-	import ArrowLeftSolid from 'flowbite-svelte-icons/ArrowLeftSolid.svelte';
-	import HomeOutline from 'flowbite-svelte-icons/HomeOutline.svelte';
-	import { goto, invalidateAll } from '$app/navigation';
+	import NavHamburger from 'flowbite-svelte/NavHamburger.svelte';
 	import type { User } from '@/lib/types/modelTypes';
 	import { routeApi } from '@/lib/util';
 
-	export let withArrowBack: boolean = true;
-	export let withHome: boolean = false;
 	export let title: string = 'Films';
 	export let user: User | null = null;
-	export let customBack: string | null = null;
 </script>
 
 <Navbar class="fixed top-0 z-50 px-0">
-	<div class="flex flex-1 items-center justify-start gap-4">
-		{#if withArrowBack}
-			<ArrowLeftSolid
-				class="h-4 w-4"
-				on:click={() => (customBack ? goto(customBack) : history.back())}
-			/>
-		{/if}
-		{#if withHome}
-			<HomeOutline
-				class="h-4 w-4"
-				on:click={async () => {
-					await invalidateAll();
-					goto('/');
-				}}
-			/>
-		{/if}
-	</div>
-	<div class="flex-1 font-bold md:text-2xl">
+	<NavHamburger
+			btnClass="focus:outline-none whitespace-normal rounded-lg focus:ring-2 p-1.5 focus:ring-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 m-0 mr-3 lg:hidden"
+		/>
+	<div class="font-bold md:text-2xl flex-1">
 		<h3 class="text-center">{title}</h3>
 	</div>
-	<div class="flex flex-1 justify-end md:order-2">
-		<DarkMode class="me-2" />
+	<div class="flex md:order-2 flex-1 justify-end">
+		<DarkMode class="me-1 md:me-2" />
 		{#if user}
 			<div class="flex items-center md:order-2">
-				<Avatar id="user-menu" src={user.avatar ? routeApi(user.avatar) : ''} />
+        <Avatar id="user-menu" src={user.avatar ? routeApi(user.avatar) : ''}/>
 			</div>
 			<Dropdown placement="bottom" triggeredBy="#user-menu">
 				<DropdownHeader>

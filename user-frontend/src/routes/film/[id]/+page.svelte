@@ -10,15 +10,14 @@
 
 	export let data: PageData;
 
-
 	const loadData = async () => {
 		const res = await fetch(routeApi(`films/${data.id}`));
 		const resdata: ApiResponse<FilmData> = await res.json();
-    if (!res.ok) {
-      throw new Error(resdata.message);
-    }
+		if (!res.ok) {
+			throw new Error(resdata.message);
+		}
 		const firstData: FilmData = resdata.data;
-    dataFilm.set(firstData);
+		dataFilm.set(firstData);
 
 		let jadwal: { date: string; time: { id: number; mulai: string; selesai: string }[] }[] = [];
 		if (firstData) {

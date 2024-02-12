@@ -3,7 +3,7 @@
 	import AngleRightSolid from 'flowbite-svelte-icons/AngleRightSolid.svelte';
 	import type { Film } from '$lib/types/modelTypes';
 	import type { HTMLImgAttributes } from 'svelte/elements';
-	import { PUBLIC_API_BASE_URL, PUBLIC_APP_NAME } from '$env/static/public';
+	import { PUBLIC_APP_NAME } from '$env/static/public';
 	import { routeApi } from '@/lib/util';
 
 	const getFilmTayang = async () => {
@@ -44,7 +44,6 @@
 			>
 				<div class="container text-white">
 					<h2 class="text-lg font-bold md:text-5xl">{image?.alt}</h2>
-					<!-- <p class="text-sm">By {image?.alt}</p> -->
 				</div>
 			</div>
 			<Indicators let:Indicator let:selected>

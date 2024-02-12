@@ -3,6 +3,6 @@ import type { PageLoad } from './$types';
 export const load: PageLoad = async ({ params }) => {
 	return {
 		id: params.id,
-    title: 'Detail Film',
+		title: 'Detail Film',
 	};
 };

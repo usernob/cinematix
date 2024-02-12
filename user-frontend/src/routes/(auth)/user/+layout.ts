@@ -1,6 +1,6 @@
-import type { LayoutLoad } from "./$types";
+import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async ({ parent }) => {
-  const { user } = await parent();
-  return { user };
-}
+	const { user } = await parent();
+	return { user };
+};

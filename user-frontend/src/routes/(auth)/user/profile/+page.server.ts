@@ -23,7 +23,7 @@ export const actions: Actions = {
 		});
 
 		const res: ApiResponse<{ user?: User } | null> = await updateUser.json();
-    console.log(res)
+		console.log(res);
 		if (res.status !== 'ok') {
 			return fail(400, { error: true, message: res.message });
 		}

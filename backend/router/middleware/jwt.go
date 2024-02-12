@@ -39,7 +39,7 @@ func Jwt() gin.HandlerFunc {
 		}
 
 		if is_admin {
-			admin, err := model.GetUserBy(model.User{ID: user_id})
+			admin, err := model.GetAdminBy(model.Admin{ID: user_id})
 			if err != nil {
 				c.JSON(http.StatusUnauthorized, gin.H{"status": "error", "message": "Unauthorized", "data": nil})
 				c.Abort()

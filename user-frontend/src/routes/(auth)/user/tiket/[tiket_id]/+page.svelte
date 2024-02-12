@@ -5,7 +5,6 @@
 	export let data: PageData;
 	$: penayangan = data.dataFilm.penayangan[0];
 	$: seats = penayangan.tiket[0].kursi;
-
 </script>
 
 <div class="container">

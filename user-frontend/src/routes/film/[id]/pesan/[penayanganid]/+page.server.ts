@@ -7,59 +7,59 @@ import { get } from 'svelte/store';
 import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ fetch, params, cookies }) => {
-  const fetchKursi = await fetch(routeApi(`kursi/${params.penayanganid}`));
+	const fetchKursi = await fetch(routeApi(`kursi/${params.penayanganid}`));
 
-  if (cookies.get('token') == undefined) {
-    throw redirect(302, '/login');
-  }
+	if (cookies.get('token') == undefined) {
+		throw redirect(302, '/login');
+	}
 
-  type DataKursi = Kursi & {
-    tiket: Tiket[];
-  };
+	type DataKursi = Kursi & {
+		tiket: Tiket[];
+	};
 
-  const dataKursi: ApiResponse<DataKursi[]> = await fetchKursi.json();
-  if (!fetchKursi.ok) {
-    throw new Error(dataKursi.message);
-  }
+	const dataKursi: ApiResponse<DataKursi[]> = await fetchKursi.json();
+	if (!fetchKursi.ok) {
+		throw new Error(dataKursi.message);
+	}
 
-  if (get(dataFilm)) {
-    // update list penayangan with the only selected penayangan
-    dataFilm.update((val) => {
-      if (!val) return val;
+	if (get(dataFilm)) {
+		// update list penayangan with the only selected penayangan
+		dataFilm.update((val) => {
+			if (!val) return val;
 
-      const selected = val.penayangan.find(
-        (penayangan) => penayangan.id === Number(params.penayanganid)
-      );
+			const selected = val.penayangan.find(
+				(penayangan) => penayangan.id === Number(params.penayanganid)
+			);
 
-      if (selected) {
-        val.penayangan = [selected];
-      }
+			if (selected) {
+				val.penayangan = [selected];
+			}
 
-      return val;
-    });
+			return val;
+		});
 
-    return {
-      token: cookies.get('token'),
-      dataKursi: dataKursi.data,
-      filmid: params.id,
-      penayanganid: params.penayanganid,
-      title: 'Pilih Seat',
-    };
-  }
+		return {
+			token: cookies.get('token'),
+			dataKursi: dataKursi.data,
+			filmid: params.id,
+			penayanganid: params.penayanganid,
+			title: 'Pilih Seat',
+		};
+	}
 
-  const res = await fetch(routeApi(`films/${params.id}/${params.penayanganid}`));
-  const data: ApiResponse<FilmData> = await res.json();
-  if (!res.ok) {
-    throw new Error(data.message);
-  }
+	const res = await fetch(routeApi(`films/${params.id}/${params.penayanganid}`));
+	const data: ApiResponse<FilmData> = await res.json();
+	if (!res.ok) {
+		throw new Error(data.message);
+	}
 
-  dataFilm.set(data.data);
+	dataFilm.set(data.data);
 
-  return {
-    token: cookies.get('token'),
-    dataKursi: dataKursi.data,
-    filmid: params.id,
-    penayanganid: params.penayanganid,
-    title: 'Pilih Seat',
-  };
+	return {
+		token: cookies.get('token'),
+		dataKursi: dataKursi.data,
+		filmid: params.id,
+		penayanganid: params.penayanganid,
+		title: 'Pilih Seat',
+	};
 };

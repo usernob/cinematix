@@ -32,12 +32,12 @@
 		}
 	};
 
-  const getExpTime = () => {
-    const d1: Date = new Date(penayangan.tiket[0].created_at)
-    const d2: Date = new Date(d1)
-    d2.setMinutes(d1.getMinutes() + 30)
-    return d2.toLocaleTimeString("en-US", { hour: 'numeric', minute: 'numeric', hour12: false })
-  }
+	const getExpTime = () => {
+		const d1: Date = new Date(penayangan.tiket[0].created_at);
+		const d2: Date = new Date(d1);
+		d2.setMinutes(d1.getMinutes() + 30);
+		return d2.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: false });
+	};
 </script>
 
 <div class="container">
@@ -110,8 +110,8 @@
 			</div>
 			<Alert color="red" class="mt-4">
 				<InfoCircleSolid slot="icon" class="h-4 w-4" />
-        <p>harap segera melakukan pembayaran sebelum pukul {getExpTime()}</p>
-        <p>Jika melebihi tengat waktu maka pesanan akan dibatalkan</p>
+				<p>harap segera melakukan pembayaran sebelum pukul {getExpTime()}</p>
+				<p>Jika melebihi tengat waktu maka pesanan akan dibatalkan</p>
 			</Alert>
 			<Button on:click={handleSubmit} class="mt-4">Bayar</Button>
 		</div>

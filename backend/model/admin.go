@@ -19,7 +19,7 @@ type Admin struct {
 type Role string
 
 func (p *Role) Scan(value interface{}) error {
-	*p = Role(value.([]byte))
+	*p = Role(value.(string))
 	return nil
 }
 
@@ -40,6 +40,14 @@ func GetAdminByEmail(email string) (*Admin, error) {
 		return nil, res.Error
 	}
 
+	return &admin, nil
+}
+
+func GetAdminBy(admin Admin) (*Admin, error) {
+	res := Db.Where(&admin).First(&admin)
+	if res.Error != nil {
+		return nil, res.Error
+	}
 	return &admin, nil
 }
 

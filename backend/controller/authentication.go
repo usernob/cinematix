@@ -3,6 +3,7 @@ package controller
 import (
 	"backend/model"
 	"backend/pkg/jwt"
+	"backend/pkg/logjson"
 	"backend/pkg/passwordhash"
 	"errors"
 	"net/http"
@@ -111,6 +112,7 @@ func AdminLogin(c *gin.Context) {
 		return
 	}
 
+  logjson.ToJSON(json)
 	admin, err := model.GetAdminByEmail(json.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, Response(Error, err.Error(), nil))
@@ -122,13 +124,13 @@ func AdminLogin(c *gin.Context) {
 		return
 	}
 
-	token, err := jwt.GenerateToken(admin.ID, false)
+	token, err := jwt.GenerateToken(admin.ID, true)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response(Error, err.Error(), nil))
 		return
 	}
 
-	c.SetCookie("token", token, 3600, "/", "", false, true)
+	c.SetCookie("admin-token", token, 3600, "/", "", false, true)
 	c.JSON(http.StatusOK, Response(Ok, "Success login", ResponseAdminAuth{Token: token, Admin: *admin}))
 }
 
@@ -159,12 +161,12 @@ func AdminRegister(c *gin.Context) {
 		return
 	}
 
-	token, err := jwt.GenerateToken(admin.ID, false)
+	token, err := jwt.GenerateToken(admin.ID, true)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Response(Error, err.Error(), nil))
 		return
 	}
 
-	c.SetCookie("token", token, 3600, "/", "", false, true)
+	c.SetCookie("admin-token", token, 3600, "/", "", false, true)
 	c.JSON(http.StatusOK, Response(Ok, "Success register", ResponseAdminAuth{Token: token, Admin: *admin}))
 }
