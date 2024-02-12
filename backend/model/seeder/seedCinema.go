@@ -31,7 +31,7 @@ func seedTiketAndSeat() {
 		model.Db.Find(&penayangan, i+1)
 		model.Db.Where("audiotorium_id = ?", penayangan.AudiotoriumID).Find(&kursi)
 
-    tiket := model.Tiket{TotalHarga: 100000, UserID: 1, PenayanganID: penayangan.ID}
+    tiket := model.Tiket{TotalHarga: 100000, UserID: 1, PenayanganID: penayangan.ID, StatusPembayaran: model.Waiting}
     model.Db.Create(&tiket)
     model.Db.Model(&tiket).Association("Kursi").Append(kursi[2:6])
 	}

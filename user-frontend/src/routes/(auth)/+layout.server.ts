@@ -10,9 +10,8 @@ export async function load(event: LayoutServerLoadEvent) {
 
   const user = session_user || locals_user || parent_user;
 
-  console.log(parent_user, locals_user, session_user, user);
   if (!user) {
     throw redirect(301, '/login');
   }
-  return { user };
+  return { user, token: event.cookies.get('token') };
 }

@@ -1,5 +1,8 @@
 tmp
-storage/*
+storage/image/profile/*
+storage/image/poster/*
 !storage/.gitignore
 !storage/.gitkeep
-
+!stoareg/image/
+!storage/image/profile/.gitkeep
+!storage/image/poster/.gitkeep

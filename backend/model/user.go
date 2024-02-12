@@ -2,19 +2,17 @@ package model
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        uint           `gorm:"primaryKey" json:"id"`
-	Nama      string         `json:"nama"`
-	Email     string         `json:"email" gorm:"unique;not null;index"`
-	Password  string         `json:"password"`
-	Tiket     []*Tiket       `json:"tiket,omitempty"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	Nama      string    `json:"nama"`
+	Email     string    `json:"email" gorm:"unique;not null;index"`
+	Password  string    `json:"password"`
+	Tiket     []*Tiket  `json:"tiket,omitempty"`
+	Avatar    *string   `json:"avatar"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func GetUserByEmail(email string) (*User, error) {
@@ -47,4 +45,9 @@ func CreateUser(nama string, email string, password string) (*User, error) {
 		return nil, res.Error
 	}
 	return &user, nil
+}
+
+func UpdateUser(user *User) error {
+	res := Db.Save(user)
+	return res.Error
 }

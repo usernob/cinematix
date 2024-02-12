@@ -3,11 +3,12 @@
 	import NavBrand from 'flowbite-svelte/NavBrand.svelte';
 	import DarkMode from 'flowbite-svelte/DarkMode.svelte';
 	import Dropdown from 'flowbite-svelte/Dropdown.svelte';
+	import Avatar from 'flowbite-svelte/Avatar.svelte';
 	import DropdownHeader from 'flowbite-svelte/DropdownHeader.svelte';
 	import DropdownItem from 'flowbite-svelte/DropdownItem.svelte';
-	import DropdownDivider from 'flowbite-svelte/DropdownDivider.svelte';
 	import { PUBLIC_APP_NAME } from '$env/static/public';
 	import type { PageData } from './$types';
+	import { routeApi } from '@/lib/util';
 
 	export let data: PageData;
 </script>
@@ -23,16 +24,15 @@
 			<DarkMode class="me-1 md:me-2" />
 			{#if data.user}
 				<div class="flex items-center md:order-2">
-					<p id="user-menu" class="cursor-pointer text-sm font-medium">Hi, {data.user.nama}</p>
+        <Avatar id="user-menu" src={data.user.avatar ? routeApi(data.user.avatar) : ''}/>
 				</div>
 				<Dropdown placement="bottom" triggeredBy="#user-menu">
 					<DropdownHeader>
+					<span class="block truncate text-sm font-medium">{data.user.nama}</span>
 						<span class="block truncate text-sm font-medium">{data.user.email}</span>
 					</DropdownHeader>
-					<DropdownItem>Dashboard</DropdownItem>
-					<DropdownItem>Settings</DropdownItem>
-					<DropdownDivider />
-					<DropdownItem>Log out</DropdownItem>
+					<DropdownItem><a href="/user">Dasboard</a></DropdownItem>
+					<DropdownItem><a href="/user/logout">Log out</a></DropdownItem>
 				</Dropdown>
 			{:else}
 				<a

@@ -4,7 +4,7 @@ import { routeApi } from '@/lib/util';
 import type { Film, Kursi, Penayangan, Tiket } from '@/lib/types/modelTypes';
 
 export const load: PageServerLoad = async ({ fetch, params }) => {
-  const res = await fetch(routeApi('user/pesanan/' + params.tiket_id));
+  const res = await fetch(routeApi(`user/pesanan/${params.tiket_id}/waiting`));
 
   type PenayanganTiket = Penayangan[] &
     {

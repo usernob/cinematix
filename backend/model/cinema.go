@@ -2,8 +2,6 @@ package model
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Kursi struct {
@@ -13,7 +11,6 @@ type Kursi struct {
 	Tiket         []*Tiket       `gorm:"many2many:seats" json:"tiket,omitempty"`
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`
-	DeletedAt     gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
 
 type Audiotorium struct {
@@ -23,7 +20,6 @@ type Audiotorium struct {
 	Penayangan []*Penayangan  `json:"penayangan,omitempty"`
 	CreatedAt  time.Time      `json:"created_at"`
 	UpdatedAt  time.Time      `json:"updated_at"`
-	DeletedAt  gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
 
 func (k *Kursi) TableName() string {

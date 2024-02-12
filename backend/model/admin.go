@@ -3,19 +3,17 @@ package model
 import (
 	"database/sql/driver"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Admin struct {
-	ID        uint           `gorm:"primaryKey" json:"id"`
-	Nama      string         `json:"nama"`
-	Email     string         `json:"email" gorm:"unique;not null;index"`
-	Password  string         `json:"password"`
-	Role      Role           `sql:"type:role" json:"role" gorm:"default:admin"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	Nama      string    `json:"nama"`
+	Email     string    `json:"email" gorm:"unique;not null;index"`
+	Password  string    `json:"password"`
+	Role      Role      `sql:"type:role" json:"role" gorm:"default:admin"`
+	Avatar    *string   `json:"avatar"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type Role string
@@ -34,7 +32,6 @@ const (
 	AdminRole      Role = "admin"
 )
 
-
 func GetAdminByEmail(email string) (*Admin, error) {
 	var admin Admin
 	res := Db.Where("email = ?", email).First(&admin)
@@ -47,14 +44,14 @@ func GetAdminByEmail(email string) (*Admin, error) {
 }
 
 func CreateAdmin(nama string, email string, password string) (*Admin, error) {
-  admin := Admin{
-    Nama:     nama,
-    Email:    email,
-    Password: password,
-  }
-  res := Db.Create(&admin)
-  if res.Error != nil {
-    return nil, res.Error
-  }
-  return &admin, nil
+	admin := Admin{
+		Nama:     nama,
+		Email:    email,
+		Password: password,
+	}
+	res := Db.Create(&admin)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return &admin, nil
 }

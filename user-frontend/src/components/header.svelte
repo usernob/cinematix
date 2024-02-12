@@ -2,46 +2,56 @@
 	import Navbar from 'flowbite-svelte/Navbar.svelte';
 	import DarkMode from 'flowbite-svelte/DarkMode.svelte';
 	import Dropdown from 'flowbite-svelte/Dropdown.svelte';
+	import Avatar from 'flowbite-svelte/Avatar.svelte';
 	import DropdownHeader from 'flowbite-svelte/DropdownHeader.svelte';
 	import DropdownItem from 'flowbite-svelte/DropdownItem.svelte';
-	import DropdownDivider from 'flowbite-svelte/DropdownDivider.svelte';
 	import ArrowLeftSolid from 'flowbite-svelte-icons/ArrowLeftSolid.svelte';
 	import HomeOutline from 'flowbite-svelte-icons/HomeOutline.svelte';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import type { User } from '@/lib/types/modelTypes';
+	import { routeApi } from '@/lib/util';
 
 	export let withArrowBack: boolean = true;
 	export let withHome: boolean = false;
 	export let title: string = 'Films';
 	export let user: User | null = null;
+	export let customBack: string | null = null;
 </script>
 
 <Navbar class="fixed top-0 z-50 px-0">
-	<div class="flex items-center justify-start gap-4">
+	<div class="flex items-center justify-start gap-4 flex-1">
 		{#if withArrowBack}
-			<ArrowLeftSolid class="h-4 w-4" on:click={() => history.back()} />
+			<ArrowLeftSolid
+				class="h-4 w-4"
+				on:click={() => (customBack ? goto(customBack) : history.back())}
+			/>
 		{/if}
 		{#if withHome}
-			<HomeOutline class="h-4 w-4" on:click={() => goto('/')} />
+			<HomeOutline
+				class="h-4 w-4"
+				on:click={async () => {
+					await invalidateAll();
+					goto('/');
+				}}
+			/>
 		{/if}
 	</div>
-	<div class="font-bold md:text-2xl">
-		<h3>{title}</h3>
+	<div class="font-bold md:text-2xl flex-1">
+		<h3 class="text-center">{title}</h3>
 	</div>
-	<div class="flex md:order-2">
+	<div class="flex md:order-2 flex-1 justify-end">
 		<DarkMode class="me-1 md:me-2" />
 		{#if user}
 			<div class="flex items-center md:order-2">
-				<p id="user-menu" class="cursor-pointer text-sm font-medium">Hi, {user.nama}</p>
+        <Avatar id="user-menu" src={user.avatar ? routeApi(user.avatar) : ''}/>
 			</div>
 			<Dropdown placement="bottom" triggeredBy="#user-menu">
 				<DropdownHeader>
+					<span class="block truncate text-sm font-medium">{user.nama}</span>
 					<span class="block truncate text-sm font-medium">{user.email}</span>
 				</DropdownHeader>
-				<DropdownItem>Dashboard</DropdownItem>
-				<DropdownItem>Settings</DropdownItem>
-				<DropdownDivider />
-				<DropdownItem>Log out</DropdownItem>
+				<DropdownItem><a href="/user">Dasboard</a></DropdownItem>
+				<DropdownItem><a href="/user/logout">Log out</a></DropdownItem>
 			</Dropdown>
 		{:else}
 			<a

@@ -7,6 +7,8 @@ import { redirect } from '@sveltejs/kit';
 export async function load(event: LayoutServerLoadEvent) {
   const token = event.cookies.get('token');
 
+  event.depends("reload:user")
+
   if (!token) {
     return { user: null };
   }
