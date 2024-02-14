@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func DeleteExpTiket() gin.HandlerFunc {
+func DeleteExpPenayangan() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		model.DeleteExpTiket()
+		model.DeleteExpPenayangan()
 		c.Next()
 	}
 }

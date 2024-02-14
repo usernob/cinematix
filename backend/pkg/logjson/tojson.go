@@ -6,6 +6,6 @@ import (
 )
 
 func ToJSON(data interface{}) {
-  b, _ := json.MarshalIndent(data, "", "  ")
-  fmt.Println(string(b))
+	b, _ := json.MarshalIndent(data, "", "  ")
+	fmt.Println(string(b))
 }

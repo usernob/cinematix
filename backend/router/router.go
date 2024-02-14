@@ -17,10 +17,11 @@ func SetupRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(middleware.Cors())
+	r.Use(middleware.DeleteExpPenayangan())
 
 	r.Static("/storage", "./storage")
 
-  r.MaxMultipartMemory = 8 << 20
+	r.MaxMultipartMemory = 8 << 20
 	r.GET("/ping", controller.Ping)
 
 	{
@@ -48,7 +49,7 @@ func SetupRouter() *gin.Engine {
 	user.Use(middleware.DeleteExpTiket())
 	{
 		user.GET("/info", usercontroller.GetUserInformation)
-    user.POST("/profile/update", usercontroller.UpdateProfile)
+		user.PUT("/profile/update", usercontroller.UpdateProfile)
 		user.POST("/pesanan/add", usercontroller.AddPesanan)
 		user.POST("/pesanan/update-pembayaran", usercontroller.UpdatePembayaran)
 		user.GET("/pesanan", usercontroller.GetAllPesanan)

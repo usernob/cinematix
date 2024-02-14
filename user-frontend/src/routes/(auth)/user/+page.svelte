@@ -10,7 +10,7 @@
 	<div class="pt-4">
 		<Avatar
 			id="user-menu"
-			class="m-auto shadow-lg"
+			class="m-auto shadow-lg object-cover object-center"
 			size="xl"
 			border
 			src={data.user.avatar ? routeApi(data.user.avatar) : ''}
@@ -24,6 +24,7 @@
 		<a href="/user/tiket" class="w-full rounded-md border border-gray-500 px-4 py-2">Tiket</a>
 		<a
 			href="/user/logout"
+			data-sveltekit-preload-data="tap"
 			class="w-full rounded-md border border-red-500 px-4 py-2 text-red-500 hover:bg-red-500 hover:text-white"
 			>Log Out</a
 		>

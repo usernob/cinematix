@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { routeApi } from '@/lib/util';
+	import { qr } from '@svelte-put/qr/svg';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -18,7 +19,7 @@
 			<div>
 				<h4 class="mt-4 text-lg font-semibold md:text-2xl">Detail Pesanan</h4>
 				<div
-					class="md:text-md grid auto-cols-fr grid-cols-2 gap-x-4 gap-y-2 text-sm text-gray-600 dark:text-gray-400"
+					class="text-md grid auto-cols-fr grid-cols-2 gap-x-4 gap-y-2 text-gray-600 dark:text-gray-400"
 				>
 					<p>Judul</p>
 					<p>{data.dataFilm.title}</p>
@@ -63,5 +64,17 @@
 				</div>
 			</div>
 		</div>
+		<svg
+			use:qr={{
+				data: `TIX-${data.user.id}-${data.dataFilm.id}-${penayangan.id}`,
+				shape: 'square',
+
+				anchorInnerFill: 'black',
+				anchorOuterFill: 'black',
+				moduleFill: 'black',
+			}}
+			class="aspect-square w-64 rounded-lg bg-white p-4 shadow-lg md:w-96"
+		/>
+		<p>Berikan Kode QR ini kepada petugas untuk memvalidasi tiket</p>
 	</div>
 </div>

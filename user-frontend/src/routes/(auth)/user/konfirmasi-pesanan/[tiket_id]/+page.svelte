@@ -120,7 +120,7 @@
 		<div class="text-center">
 			<CheckCircleSolid class="mx-auto mb-4 h-20 w-20 text-green-400 dark:text-green-200" />
 			<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Pembayaran Berhasil</h3>
-			<Button color="alternative" on:click={() => goto('/user')}>Tutup</Button>
+			<Button color="alternative" on:click={() => goto(`/user/tiket/${penayangan.tiket[0].id}`)}>Tutup</Button>
 		</div>
 	</Modal>
 </div>

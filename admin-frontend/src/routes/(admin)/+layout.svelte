@@ -58,7 +58,7 @@
 		console.log('hiii');
 	};
 	$: activeUrl = $page.url.pathname;
-  $: console.log(activeUrl)
+	$: console.log(activeUrl);
 
 	const superadminRoute: string[] = ['profile'];
 	const adminRoute: string[] = ['profile'];
@@ -83,13 +83,13 @@
 						<span class="block truncate text-sm font-medium">{data.user.nama}</span>
 						<span class="block truncate text-sm font-medium">{data.user.email}</span>
 					</DropdownHeader>
-					<DropdownItem><a href="/user">Dasboard</a></DropdownItem>
-					<DropdownItem><a href="/user/logout">Log out</a></DropdownItem>
+					<DropdownItem><a href="/">Dasboard</a></DropdownItem>
+					<DropdownItem><a href="/logout">Log out</a></DropdownItem>
 				</Dropdown>
 			{:else}
 				<a
 					href="/login"
-					class="border-primary-700 text-primary-700 rounded-lg border-2 px-4 py-2 text-sm font-medium"
+					class="rounded-lg border-2 border-primary-700 px-4 py-2 text-sm font-medium text-primary-700"
 					>Sign In</a
 				>
 			{/if}
@@ -110,29 +110,40 @@
 	<div class="flex items-center">
 		<CloseButton on:click={() => (drawerHidden = true)} class="mb-4 dark:text-white lg:hidden" />
 	</div>
-	<Sidebar asideClass="w-54" {activeUrl}>
+	<Sidebar
+		asideClass="w-54"
+		{activeUrl}
+		activeClass="
+      flex items-center 
+      p-2 text-base font-normal text-primary-900 
+      bg-primary-200 dark:bg-primary-700 
+      rounded-lg dark:text-white hover:bg-primary-100 dark:hover:bg-gray-700
+    "
+	>
 		<SidebarWrapper divClass="overflow-y-auto py-4 px-3 rounded dark:bg-gray-800">
 			<SidebarGroup>
 				<SidebarItem label="Dasboard" href="/" on:click={toggleSide} />
 				{#if data.user?.role === 'superadmin'}
 					{#each superadminRoute as route}
 						<SidebarItem
-							label={route.replaceAll("_", ' ')}
+							label={route.replaceAll('_', ' ')}
 							class="capitalize"
-							href={"/" + route}
+							href={'/' + route}
+							on:click={toggleSide}
+							active={activeUrl === `/${route}`}
+						/>
+					{/each}
+				{:else if data.user?.role === 'admin'}
+					{#each adminRoute as route}
+						<SidebarItem
+							label={route.replaceAll('_', ' ')}
+							class="capitalize"
+							href={'/' + route}
 							on:click={toggleSide}
 							active={activeUrl === `/${route}`}
 						/>
 					{/each}
 				{/if}
-				<!-- <SidebarItem -->
-				<!-- 	label="test" -->
-				<!-- 	href={`/pages/ppp`} -->
-				<!-- 	{spanClass} -->
-				<!-- 	activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-primary-200 dark:bg-primary-700 rounded-lg dark:text-white hover:bg-primary-100 dark:hover:bg-primary-700" -->
-				<!-- 	on:click={toggleSide} -->
-				<!-- 	active={activeUrl === `/pages/ppppp`} -->
-				<!-- /> -->
 			</SidebarGroup>
 		</SidebarWrapper>
 	</Sidebar>

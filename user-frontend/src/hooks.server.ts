@@ -16,7 +16,7 @@ export const handleFetch: HandleFetch = async ({ request, fetch, event }) => {
 	}
 
 	console.log(`Making request to ${request.url}`);
-	console.log({ request });
+	// console.log({ request });
 	return fetch(request);
 };
 

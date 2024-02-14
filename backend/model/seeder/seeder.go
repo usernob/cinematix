@@ -99,5 +99,5 @@ func Seed() {
 	seedGenre()
 	seedFilmAndPenyangan()
 	seedCinema()
-  seedTiketAndSeat()
+	seedTiketAndSeat()
 }

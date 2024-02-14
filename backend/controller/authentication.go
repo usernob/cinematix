@@ -69,10 +69,10 @@ func UserRegister(c *gin.Context) {
 	}
 
 	_, err := model.GetUserByEmail(json.Email)
-  if !(errors.Is(err, gorm.ErrRecordNotFound)) {
-    c.JSON(http.StatusBadRequest, Response(Error, "email already exist", nil))
-    return
-  }
+	if !(errors.Is(err, gorm.ErrRecordNotFound)) {
+		c.JSON(http.StatusBadRequest, Response(Error, "email already exist", nil))
+		return
+	}
 
 	passwordHased, err := passwordhash.HashPassword(json.Password)
 	if err != nil {
@@ -98,8 +98,6 @@ func UserRegister(c *gin.Context) {
 	c.JSON(http.StatusOK, Response(Ok, "Success register", ResponseUserAuth{Token: token, User: *user}))
 }
 
-
-
 type ResponseAdminAuth struct {
 	Token string      `json:"token"`
 	Admin model.Admin `json:"user"`
@@ -112,7 +110,7 @@ func AdminLogin(c *gin.Context) {
 		return
 	}
 
-  logjson.ToJSON(json)
+	logjson.ToJSON(json)
 	admin, err := model.GetAdminByEmail(json.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, Response(Error, err.Error(), nil))
@@ -142,10 +140,10 @@ func AdminRegister(c *gin.Context) {
 	}
 
 	_, err := model.GetAdminByEmail(json.Email)
-  if !(errors.Is(err, gorm.ErrRecordNotFound)) {
-    c.JSON(http.StatusBadRequest, Response(Error, "email already exist", nil))
-    return
-  }
+	if !(errors.Is(err, gorm.ErrRecordNotFound)) {
+		c.JSON(http.StatusBadRequest, Response(Error, "email already exist", nil))
+		return
+	}
 
 	passwordHased, err := passwordhash.HashPassword(json.Password)
 	if err != nil {

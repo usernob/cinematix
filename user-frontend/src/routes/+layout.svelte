@@ -2,6 +2,6 @@
 	import '@/app.css';
 </script>
 
-<div>
+<div class="mb-8 md:mb-16">
 	<slot />
 </div>

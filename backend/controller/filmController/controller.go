@@ -45,9 +45,9 @@ func FilmDetail(c *gin.Context) {
 }
 
 func FilmDetailPenayangan(c *gin.Context) {
-  id := c.Param("id")
-  penayangan_id := c.Param("penayangan_id")
-  data, err := model.GetPenayanganSingle(id, penayangan_id)
+	id := c.Param("id")
+	penayangan_id := c.Param("penayangan_id")
+	data, err := model.GetPenayanganSingle(id, penayangan_id)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))

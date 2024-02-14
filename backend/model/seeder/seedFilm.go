@@ -42,22 +42,19 @@ func seedFilmAndPenyangan() {
 
 	var films []model.Film
 	for i, film := range resFilms.Results {
-		randomInt := rand.Intn(2)
 		tanggalRilis, err := time.Parse("2006-01-02", film.TangalRilis)
 		if err != nil {
 			panic(err)
 		}
 
 		penyangan := []*model.Penayangan{}
-		if randomInt == 1 {
-			for j := 1; j < (rand.Intn(3)+2); j++ {
-				penyangan = append(penyangan, &model.Penayangan{
-					AudiotoriumID: audiotorium[rand.Intn(3)].ID,
-					Harga:         50000,
-					Mulai:         time.Now().Add(time.Hour * 24 * time.Duration(i + j)),
-					Selesai:       time.Now().Add(time.Hour*24*time.Duration(i + j) + time.Hour*2),
-				})
-			}
+		for j := 0; j < (rand.Intn(3) + 2); j++ {
+			penyangan = append(penyangan, &model.Penayangan{
+				AudiotoriumID: audiotorium[rand.Intn(3)].ID,
+				Harga:         50000,
+				Mulai:         time.Now().Add(time.Hour * (24 * time.Duration(i+j))),
+				Selesai:       time.Now().Add(time.Hour*(24*time.Duration(i+j)) + time.Minute),
+			})
 		}
 
 		genres := []*model.Genre{}

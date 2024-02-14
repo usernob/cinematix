@@ -6,7 +6,7 @@
 	import EyeSlashOutline from 'flowbite-svelte-icons/EyeSlashOutline.svelte';
 	import type { ActionData } from './$types';
 	import { applyAction, enhance } from '$app/forms';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { session } from '@/lib/stores/session';
 
 	let show: boolean = false;
@@ -26,6 +26,7 @@
 			if (result.type === 'success') {
 				const user = result.data?.user;
 				if (user) $session.user = user;
+        await invalidateAll()
 				await goto('/');
 			}
 		}}

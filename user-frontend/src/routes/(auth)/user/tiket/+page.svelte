@@ -7,6 +7,9 @@
 
 <div class="container max-w-[40rem]">
 	<div class="flex flex-col items-center gap-4">
+    {#if data.tiket.length === 0}
+      <h4 class="text-3xl opacity-40 font-semibold">Tidak ada tiket yang dipesan</h4>
+    {/if}
 		{#each data.tiket as tiket}
 			<a
 				href={tiket.status_pembayaran === 'done'

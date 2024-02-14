@@ -5,11 +5,15 @@ import (
 	"backend/model"
 	"backend/pkg/logjson"
 	"fmt"
+	"mime/multipart"
 	"net/http"
+	"os"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 func GetUserInformation(c *gin.Context) {
@@ -25,8 +29,9 @@ type PesananRequest struct {
 }
 
 type UpdateProfileRequest struct {
-	Email string `json:"email"`
-	Nama  string `json:"nama"`
+	Email  string                `form:"email" binding:"required"`
+	Nama   string                `form:"nama" binding:"required"`
+	Avatar *multipart.FileHeader `form:"avatar"`
 }
 
 func UpdateProfile(c *gin.Context) {
@@ -34,7 +39,7 @@ func UpdateProfile(c *gin.Context) {
 
 	fmt.Println(c.GetHeader("Content-Type"))
 	var userUpdate UpdateProfileRequest
-	err := c.ShouldBindJSON(&userUpdate)
+	err := c.ShouldBindWith(&userUpdate, binding.FormMultipart)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, controller.Response(controller.Error, err.Error(), nil))
 		return
@@ -42,19 +47,24 @@ func UpdateProfile(c *gin.Context) {
 
 	user.Email = userUpdate.Email
 	user.Nama = userUpdate.Nama
-	fileSavedPath := path.Join("storage", "images", "profile", fmt.Sprintf("%d.png", user.ID))
+	fileSavedPath := path.Join("storage", "image", "profile", fmt.Sprintf("%d%d.png", time.Now().Unix(), user.ID))
 
-	file, err := c.FormFile("avatar")
-  fmt.Println(err)
-	if err == nil {
-		if err := c.SaveUploadedFile(file, fileSavedPath); err != nil {
+	fmt.Println(fileSavedPath)
+	logjson.ToJSON(userUpdate)
+	if userUpdate.Avatar != nil {
+		removeErr := os.Remove(*user.Avatar)
+		if removeErr != nil {
+			c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, removeErr.Error(), nil))
+			return
+		}
+
+		if err := c.SaveUploadedFile(userUpdate.Avatar, fileSavedPath); err != nil {
 			c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
 			return
 		}
 		user.Avatar = &fileSavedPath
 	}
 
-	logjson.ToJSON(userUpdate)
 	logjson.ToJSON(user)
 	Updateerr := model.UpdateUser(user)
 	if Updateerr != nil {
@@ -104,8 +114,6 @@ func UpdatePembayaran(c *gin.Context) {
 	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", tiket))
 }
 
-
-
 func GetAllPesanan(c *gin.Context) {
 	user := c.MustGet("user").(*model.User)
 	res, err := model.GetAllTiket(user.ID)
@@ -131,7 +139,6 @@ func GetTiketDone(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", res))
 }
-
 
 func GetTiketWaiting(c *gin.Context) {
 	user := c.MustGet("user").(*model.User)

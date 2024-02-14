@@ -4,6 +4,8 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Tiket struct {
@@ -12,9 +14,10 @@ type Tiket struct {
 	StatusPembayaran Status_Pembayaran `sql:"type:status_pembayaran" json:"status_pembayaran"`
 	UserID           uint              `json:"user_id"`
 	PenayanganID     uint              `json:"penyangan_id"`
-	Kursi            []*Kursi          `gorm:"many2many:seats" json:"kursi,omitempty"`
+	Kursi            []*Kursi          `gorm:"many2many:seats;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"kursi,omitempty"`
 	CreatedAt        time.Time         `json:"created_at"`
 	UpdatedAt        time.Time         `json:"updated_at"`
+	DeletedAt        gorm.DeletedAt    `gorm:"index"`
 }
 
 type Seats struct {
@@ -84,16 +87,20 @@ func GetPesanan(tiketid uint, userid uint, status Status_Pembayaran) (*Film, err
 func GetAllTiket(userid uint) ([]*Tiket, error) {
 	var tikets []*Tiket
 	err := Db.Where(&Tiket{UserID: userid}).Find(&tikets)
-  if err.Error != nil {
-    return nil, err.Error
-  }
+	if err.Error != nil {
+		return nil, err.Error
+	}
 	return tikets, nil
 }
 
 func DeleteExpTiket() {
 	var tikets []*Tiket
 	var tiketExp []Tiket
-	Db.Where(&Tiket{StatusPembayaran: Waiting}).Find(&tikets)
+  res := Db.Where(&Tiket{StatusPembayaran: Waiting}).Find(&tikets)
+  if res.Error != nil {
+    return
+  }
+
 	for _, tik := range tikets {
 		if tik.UpdatedAt.Add(time.Minute * 2).Before(time.Now()) {
 			tiketExp = append(tiketExp, *tik)

@@ -2,17 +2,20 @@ package model
 
 import (
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID        uint      `gorm:"primaryKey" json:"id"`
-	Nama      string    `json:"nama"`
-	Email     string    `json:"email" gorm:"unique;not null;index"`
-	Password  string    `json:"password"`
-	Tiket     []*Tiket  `json:"tiket,omitempty"`
-	Avatar    *string   `json:"avatar"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uint           `gorm:"primaryKey" json:"id"`
+	Nama      string         `json:"nama"`
+	Email     string         `json:"email" gorm:"unique;not null;index"`
+	Password  string         `json:"password"`
+	Tiket     []*Tiket       `json:"tiket,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Avatar    *string        `json:"avatar"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
 func GetUserByEmail(email string) (*User, error) {
