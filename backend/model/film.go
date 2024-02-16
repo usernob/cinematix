@@ -96,3 +96,13 @@ func GetPenayanganSingle(id string, penayangan_id string) (Film, error) {
 	res := Db.Preload("Genre").Preload("Penayangan", "id = ?", penayangan_id).Where("id = ?", id).First(&film)
 	return film, res.Error
 }
+
+func AddFilm(film Film) error {
+  err := Db.Create(&film)
+  return err.Error
+}
+
+func EditFilm(film Film) error {
+  err := Db.Save(&film)
+  return err.Error
+}

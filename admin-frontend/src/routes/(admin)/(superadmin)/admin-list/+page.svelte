@@ -47,7 +47,7 @@
 				<TableBodyCell>{item.nama}</TableBodyCell>
 				<TableBodyCell>{item.email}</TableBodyCell>
 				{#if data.user?.role === 'superadmin'}
-					<TableBodyCell><a href="#" on:click={() => DeleteAdmin(item.id)} data-sveltekit-preload-data="tap" >Hapus</a></TableBodyCell>
+					<TableBodyCell><a href="#" class="text-primary-500 hover:underline" on:click={() => DeleteAdmin(item.id)} data-sveltekit-preload-data="tap" >Hapus</a></TableBodyCell>
 				{/if}
 			</TableBodyRow>
 		{/each}

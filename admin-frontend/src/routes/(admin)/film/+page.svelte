@@ -1,10 +1,12 @@
 <script lang="ts">
 	import Table from 'flowbite-svelte/Table.svelte';
+	import TableSearch from 'flowbite-svelte/TableSearch.svelte';
 	import TableBody from 'flowbite-svelte/TableBody.svelte';
 	import TableBodyCell from 'flowbite-svelte/TableBodyCell.svelte';
 	import TableBodyRow from 'flowbite-svelte/TableBodyRow.svelte';
 	import TableHead from 'flowbite-svelte/TableHead.svelte';
 	import TableHeadCell from 'flowbite-svelte/TableHeadCell.svelte';
+	import Button from 'flowbite-svelte/Button.svelte';
 	import { writable } from 'svelte/store';
 	import type { PageData } from '../$types';
 	import { onMount } from 'svelte';
@@ -15,6 +17,7 @@
 	export let data: PageData;
 
 	let items: Film[] = [];
+  let searchTerm = '';
 
 	const sortKey = writable('id'); // default sort key
 	const sortDirection = writable(1); // default sort direction (ascending)
@@ -35,7 +38,6 @@
     }
   })
 
-  $: console.log($sortItems);
 
 
 	// Define a function to sort the items
@@ -63,10 +65,13 @@
 			return 0;
 		});
 		sortItems.set(sorted);
-	}
+	} 
+  $: filteredItems = items.filter((item) => item.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1);
+  $: sortItems.set(filteredItems.slice());
 </script>
 
-<Table hoverable={true}>
+<TableSearch hoverable={true} placeholder="Cari Nama film" bind:inputValue={searchTerm} searchClass="relative" innerDivClass="py-4 flex justify-between items-center gap-4">
+  <Button size="lg" slot="header">Tambah Film</Button>
 	<TableHead theadClass="cursor-pointer">
 		<TableHeadCell on:click={() => sortTable('id')}>ID</TableHeadCell>
 		<TableHeadCell on:click={() => sortTable('title')}>Judul</TableHeadCell>
@@ -84,9 +89,9 @@
 				<TableBodyCell>{item.rating}</TableBodyCell>
 				<TableBodyCell>{new Date(item.updated_at).toLocaleDateString("id-ID")}</TableBodyCell>
 				{#if data.user?.role === 'superadmin'}
-					<TableBodyCell><a href="/film/{item.id}">Edit</a></TableBodyCell>
+					<TableBodyCell><a href="/film/{item.id}" class="text-primary-500 hover:underline">Edit</a></TableBodyCell>
 				{/if}
 			</TableBodyRow>
 		{/each}
 	</TableBody>
-</Table>
+</TableSearch>
