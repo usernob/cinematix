@@ -13,6 +13,7 @@ type Film struct {
 	TanggalRilis time.Time     `json:"tanggal_rilis"`
 	Sinopsis     string        `json:"sinopsis"`
 	PosterPath   string        `json:"poster_path"`
+	Popularitas  uint          `json:"popularitas" gorm:"default:0"`
 	Genre        []*Genre      `gorm:"many2many:film_genres;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"genre,omitempty"`
 	Penayangan   []*Penayangan `json:"penayangan,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	CreatedAt    time.Time     `json:"created_at"`
@@ -41,6 +42,15 @@ type ResFilmTayang struct {
 	FilmPosterPath string `json:"film_poster_path"`
 }
 
+func GetAllFilm() ([]Film, error) {
+	var films []Film
+	res := Db.Find(&films)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return films, nil
+}
+
 func GetFilmTayang(cooming_soon bool) ([]Film, error) {
 	var operator string
 	if cooming_soon {
@@ -58,6 +68,12 @@ func GetFilmTayang(cooming_soon bool) ([]Film, error) {
 		Group("films.id").
 		Find(&films)
 
+	return films, res.Error
+}
+
+func GetFilmPopuler() ([]Film, error) {
+	var films []Film
+	res := Db.Order("popularitas desc").Order("rating desc").Limit(10).Find(&films)
 	return films, res.Error
 }
 

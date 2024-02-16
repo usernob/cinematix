@@ -96,10 +96,10 @@ func GetAllTiket(userid uint) ([]*Tiket, error) {
 func DeleteExpTiket() {
 	var tikets []*Tiket
 	var tiketExp []Tiket
-  res := Db.Where(&Tiket{StatusPembayaran: Waiting}).Find(&tikets)
-  if res.Error != nil {
-    return
-  }
+	res := Db.Where(&Tiket{StatusPembayaran: Waiting}).Find(&tikets)
+	if res.Error != nil {
+		return
+	}
 
 	for _, tik := range tikets {
 		if tik.UpdatedAt.Add(time.Minute * 2).Before(time.Now()) {

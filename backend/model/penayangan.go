@@ -57,37 +57,44 @@ func GetKursi(penayanganId uint) ([]*Kursi, error) {
 }
 
 func DeleteExpPenayangan() error {
-	var penayangan Penayangan
-	var tiketTerjual uint
-	var totalPendapatan uint
+	var penayangans []Penayangan
 
-	res := Db.Preload("Tiket.Kursi").Preload("Tiket").Where("selesai < ?", time.Now()).First(&penayangan)
+	res := Db.Preload("Tiket.Kursi").Preload("Tiket").Where("selesai < ?", time.Now()).Find(&penayangans)
 
-  if errors.Is(res.Error, gorm.ErrRecordNotFound) {
-    return nil 
-  }
+	if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		return nil
+	}
 
 	if res.Error != nil {
 		return res.Error
 	}
 
-  logjson.ToJSON(penayangan)
-
-	for _, tiket := range penayangan.Tiket {
-		totalPendapatan += tiket.TotalHarga
-		tiketTerjual += uint(len(tiket.Kursi))
+	if len(penayangans) <= 0 {
+		return nil
 	}
 
-  deletePenayangan := Db.Select("Tiket").Delete(&penayangan)
-  if deletePenayangan.Error != nil {
-    return deletePenayangan.Error
-  }
+	for _, penayangan := range penayangans {
+		var tiketTerjual uint
+		var totalPendapatan uint
+		deletePenayangan := Db.Select("Tiket").Delete(&penayangan)
+		if deletePenayangan.Error != nil {
+			return deletePenayangan.Error
+		}
 
-	create := Db.Create(&Report{PenayanganID: penayangan.ID, TiketTerjual: tiketTerjual, Pendapatan: totalPendapatan})
-	if create.Error != nil {
-		return create.Error
+		if len(penayangan.Tiket) <= 0 {
+			continue
+		}
+
+		for _, tiket := range penayangan.Tiket {
+			totalPendapatan += tiket.TotalHarga
+			tiketTerjual += uint(len(tiket.Kursi))
+		}
+
+		create := Db.Create(&Report{PenayanganID: penayangan.ID, TiketTerjual: tiketTerjual, Pendapatan: totalPendapatan, CreatedAt: penayangan.Selesai})
+		if create.Error != nil {
+			return create.Error
+		}
 	}
-
 
 	return nil
 }

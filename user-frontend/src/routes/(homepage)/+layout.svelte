@@ -24,7 +24,11 @@
 			<DarkMode class="me-2" />
 			{#if data.user}
 				<div class="flex items-center md:order-2">
-					<Avatar id="user-menu" class="object-cover object-center" src={data.user.avatar ? routeApi(data.user.avatar) : ''} />
+					<Avatar
+						id="user-menu"
+						class="object-cover object-center"
+						src={data.user.avatar ? routeApi(data.user.avatar) : ''}
+					/>
 				</div>
 				<Dropdown placement="bottom" triggeredBy="#user-menu">
 					<DropdownHeader>

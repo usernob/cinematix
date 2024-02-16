@@ -138,7 +138,7 @@
 				>
 					{#each data.dataKursi as kursi (kursi.id)}
 						<button
-							class="rounded-md py-4 text-[0.675rem] md:text-md text-white"
+							class="md:text-md rounded-md py-4 text-[0.675rem] text-white"
 							class:bg-gray-500={excludeKursiId.includes(kursi.id)}
 							class:bg-primary-400={!excludeKursiId.includes(kursi.id) &&
 								isKursiDipilhExists(kursi.id)}

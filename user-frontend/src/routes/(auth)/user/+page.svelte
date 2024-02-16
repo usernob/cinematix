@@ -10,7 +10,7 @@
 	<div class="pt-4">
 		<Avatar
 			id="user-menu"
-			class="m-auto shadow-lg object-cover object-center"
+			class="m-auto object-cover object-center shadow-lg"
 			size="xl"
 			border
 			src={data.user.avatar ? routeApi(data.user.avatar) : ''}

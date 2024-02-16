@@ -8,9 +8,9 @@ export type BaseModel = {
 export type Film = BaseModel & {
 	title: string;
 	poster_path: string;
-	overview: string;
 	rating: number;
 	sinopsis: string;
+	populartias: number;
 	tanggal_rilis: string;
 };
 

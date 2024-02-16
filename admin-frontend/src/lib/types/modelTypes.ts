@@ -8,9 +8,9 @@ export type BaseModel = {
 export type Film = BaseModel & {
   title: string;
   poster_path: string;
-  overview: string;
   rating: number;
   sinopsis: string;
+  popularitas: number
   tanggal_rilis: string;
 };
 
@@ -45,6 +45,13 @@ export type Auditorium = BaseModel & {
 export type Seat = BaseModel & {
   kursi_id: number,
   tiket_id: number,
+}
+
+export type Report = BaseModel & {
+  penayangan_id: number,
+  tiket_terjual: number,
+  pendapatan: number,
+  created_at: string,
 }
 
 export type User = BaseModel & {

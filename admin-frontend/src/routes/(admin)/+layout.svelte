@@ -60,14 +60,13 @@
 	$: activeUrl = $page.url.pathname;
 	$: console.log(activeUrl);
 
-	const superadminRoute: string[] = ['profile'];
-	const adminRoute: string[] = ['profile'];
-	// let spanClass = 'pl-2 self-center text-md text-gray-900 whitespace-nowrap dark:text-white';
+	const superadminRoute: string[] = ["film","admin-list", "tambah-petugas"];
+	const adminRoute: string[] = ["film"];
 </script>
 
 <svelte:window bind:innerWidth={width} />
 <header class="fixed top-0 z-50 mx-auto flex w-full px-4">
-	<Navbar fluid class="!px-0 lg:ml-72">
+	<Navbar fluid class="!px-0 lg:ml-64">
 		<NavHamburger onClick={toggleDrawer} class="m-0 p-0 lg:hidden" />
 		<div class="font-bold md:text-2xl">
 			<h3 class="text-center">{title}</h3>
@@ -126,7 +125,7 @@
 				{#if data.user?.role === 'superadmin'}
 					{#each superadminRoute as route}
 						<SidebarItem
-							label={route.replaceAll('_', ' ')}
+							label={route.replaceAll('-', ' ')}
 							class="capitalize"
 							href={'/' + route}
 							on:click={toggleSide}
@@ -135,8 +134,8 @@
 					{/each}
 				{:else if data.user?.role === 'admin'}
 					{#each adminRoute as route}
-						<SidebarItem
-							label={route.replaceAll('_', ' ')}
+						<SidebarItem 
+							label={route.replaceAll('-', ' ')}
 							class="capitalize"
 							href={'/' + route}
 							on:click={toggleSide}
@@ -150,7 +149,7 @@
 </Drawer>
 
 <div class="mx-auto mt-16 flex w-full px-4">
-	<main class="mx-auto w-full lg:ml-72">
+	<main class="mx-auto w-full lg:ml-64">
 		<slot />
 	</main>
 </div>

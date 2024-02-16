@@ -108,7 +108,7 @@
 			</button>
 		</Input>
 		{#if password !== passwordverif}
-			<Helper color="red">Password harus sama</Helper>
+			<Helper color="red">Password tidak cocok</Helper>
 		{/if}
 	</div>
 	{#if form?.incorrect}

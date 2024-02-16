@@ -54,15 +54,30 @@ func GetAdminBy(admin Admin) (*Admin, error) {
 	return &admin, nil
 }
 
+func GetAdminList() ([]Admin, error) {
+	var admin []Admin
+	res := Db.Where(&Admin{Role: AdminRole}).Find(&admin)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return admin, nil
+}
+
 func CreateAdmin(nama string, email string, password string) (*Admin, error) {
 	admin := Admin{
 		Nama:     nama,
 		Email:    email,
 		Password: password,
+		Role:     AdminRole,
 	}
 	res := Db.Create(&admin)
 	if res.Error != nil {
 		return nil, res.Error
 	}
 	return &admin, nil
+}
+
+func DeleteAdmin(id uint) error {
+	res := Db.Where("id = ?", id).Delete(&Admin{})
+	return res.Error
 }

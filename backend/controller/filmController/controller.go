@@ -3,6 +3,7 @@ package filmcontroller
 import (
 	"backend/controller"
 	"backend/model"
+	"backend/pkg/logjson"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +26,24 @@ func FilmAkanTayang(c *gin.Context) {
 	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
 }
 
+func FilmPopuler(c *gin.Context) {
+	data, err := model.GetFilmPopuler()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
+}
+
+func GetAllFilm(c *gin.Context) {
+	res, err := model.GetAllFilm()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", res))
+}
+
 func FilmList(c *gin.Context) {
 	data, err := model.GetFilmHaveTayang()
 	if err != nil {
@@ -41,6 +60,7 @@ func FilmDetail(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
 		return
 	}
+	logjson.ToJSON(data)
 	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
 }
 

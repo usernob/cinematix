@@ -9,10 +9,12 @@
 	const getFilmTayang = async () => {
 		const tayang = await fetch(routeApi('films/tayang'));
 		const akanTayang = await fetch(routeApi('films/akan-tayang'));
+		const populer = await fetch(routeApi('films/populer'));
 
 		const dataTayang: { data: Film[] } = await tayang.json();
 		const dataAkanTayang: { data: Film[] } = await akanTayang.json();
-		const images = dataAkanTayang.data.map((item: Film) => {
+		const dataPopuler: { data: Film[] } = await populer.json();
+		const images = dataPopuler.data.map((item: Film) => {
 			return {
 				src: routeApi(item?.poster_path),
 				alt: item?.title,

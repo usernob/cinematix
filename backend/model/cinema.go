@@ -1,6 +1,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -37,4 +38,20 @@ func (k *Kursi) TableName() string {
 
 func (a *Audiotorium) TableName() string {
 	return "audiotorium"
+}
+
+func GetReport(thisweek bool) ([]Report, error) {
+	var operator string
+	if thisweek {
+		operator = ">"
+	} else {
+		operator = "<"
+	}
+	var reports []Report
+	err := Db.Where(fmt.Sprintf("created_at %s ?", operator), time.Now().AddDate(0, 0, -7)).Find(&reports)
+	if err.Error != nil {
+		return nil, err.Error
+	}
+
+	return reports, nil
 }

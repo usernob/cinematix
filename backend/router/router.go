@@ -28,9 +28,9 @@ func SetupRouter() *gin.Engine {
 		r.POST("/login/user", controller.UserLogin)
 		r.POST("/register/user", controller.UserRegister)
 		r.POST("/login/admin", controller.AdminLogin)
-		r.POST("/register/admin", controller.AdminRegister)
 		r.GET("/films/tayang", filmcontroller.FilmTayang)
 		r.GET("/films/akan-tayang", filmcontroller.FilmAkanTayang)
+		r.GET("/films/populer", filmcontroller.FilmPopuler)
 		r.GET("/films", filmcontroller.FilmList)
 		r.GET("/films/:id", filmcontroller.FilmDetail)
 		r.GET("/films/:id/:penayangan_id", filmcontroller.FilmDetailPenayangan)
@@ -42,6 +42,15 @@ func SetupRouter() *gin.Engine {
 	admin.Use(middleware.Jwt())
 	{
 		admin.GET("/info", admincontroller.GetAdminInformation)
+		admin.GET("/all-films", filmcontroller.GetAllFilm)
+		admin.GET("/report/thisweek", admincontroller.GetThisWeekReport)
+	}
+
+	superAdmin := admin.Use(middleware.SuperAdminRole())
+	{
+		superAdmin.POST("/register", controller.AdminRegister)
+		superAdmin.GET("/list-admin", admincontroller.AdminList)
+		superAdmin.DELETE("/:id", admincontroller.DeleteAdmin)
 	}
 
 	user := r.Group("/user")

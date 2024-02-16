@@ -23,7 +23,10 @@
 		{#if withArrowBack}
 			<ArrowLeftSolid
 				class="h-4 w-4"
-				on:click={() => (customBack ? goto(customBack) : history.back())}
+				on:click={async () => {
+					await invalidateAll();
+					customBack ? goto(customBack) : history.back();
+				}}
 			/>
 		{/if}
 		{#if withHome}
@@ -43,7 +46,11 @@
 		<DarkMode class="me-2" />
 		{#if user}
 			<div class="flex items-center md:order-2">
-				<Avatar id="user-menu" class="object-cover object-center" src={user.avatar ? routeApi(user.avatar) : ''} />
+				<Avatar
+					id="user-menu"
+					class="object-cover object-center"
+					src={user.avatar ? routeApi(user.avatar) : ''}
+				/>
 			</div>
 			<Dropdown placement="bottom" triggeredBy="#user-menu">
 				<DropdownHeader>

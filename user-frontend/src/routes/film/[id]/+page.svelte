@@ -47,12 +47,10 @@
 					return jadwal.push({ date: localeDate, time: [extractedItem] });
 				}
 
-				for (let i = 0; i < jadwal.length; i++) {
-					if (localeDate === jadwal[i].date) {
-						jadwal[i].time.push(extractedItem);
-						continue;
-					}
+				if (!jadwal.find((item) => item.date === localeDate)) {
 					jadwal.push({ date: localeDate, time: [extractedItem] });
+				} else {
+					jadwal.find((item) => item.date === localeDate)?.time.push(extractedItem);
 				}
 			});
 		}

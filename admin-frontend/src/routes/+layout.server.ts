@@ -7,29 +7,28 @@ import { redirect } from '@sveltejs/kit';
 export async function load(event: LayoutServerLoadEvent) {
   const token = event.cookies.get('admin-token');
 
-  event.depends("reload:user")
+  event.depends('reload:user');
 
   if (!token) {
-    return { user: null };
+    return { token: null, user: null };
   }
 
   if (event.locals?.user) {
-    return { user: event.locals.user };
+    return { token, user: event.locals.user };
   }
 
   const getData = await event.fetch(routeApi('admin/info'));
 
   const res: ApiResponse<User> = await getData.json();
 
-  console.log(res)
   if (res.status === 'ok' || res.data) {
-    delete res.data.password
+    delete res.data.password;
     event.locals.user = res.data;
   } else {
     throw redirect(302, '/login');
   }
 
   const user = event.locals?.user;
-  if (!user) return { user: null };
-  return { user };
+  if (!user) return { token, user: null };
+  return { token, user };
 }

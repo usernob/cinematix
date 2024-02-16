@@ -48,12 +48,23 @@ func seedFilmAndPenyangan() {
 		}
 
 		penyangan := []*model.Penayangan{}
-		for j := 0; j < (rand.Intn(3) + 2); j++ {
+		for j := 0; j < rand.Intn(25); j++ {
+			var mulai time.Time
+			var selesai time.Time
+
+			if j%3 == 0 {
+				mulai = time.Now().Add(time.Hour * (4 * time.Duration(-i+-j)))
+				selesai = time.Now().Add(time.Hour*(4*time.Duration(-i+-j)) + time.Hour*2)
+			} else {
+				mulai = time.Now().Add(time.Hour * (12 * time.Duration(i+j)))
+				selesai = time.Now().Add(time.Hour*(12*time.Duration(i+j)) + time.Hour*2)
+			}
+
 			penyangan = append(penyangan, &model.Penayangan{
 				AudiotoriumID: audiotorium[rand.Intn(3)].ID,
 				Harga:         50000,
-				Mulai:         time.Now().Add(time.Hour * (24 * time.Duration(i+j))),
-				Selesai:       time.Now().Add(time.Hour*(24*time.Duration(i+j)) + time.Minute),
+				Mulai:         mulai,
+				Selesai:       selesai,
 			})
 		}
 
@@ -73,6 +84,7 @@ func seedFilmAndPenyangan() {
 			Title:        film.Title,
 			TanggalRilis: tanggalRilis,
 			Rating:       film.Rating,
+			Popularitas:  uint(rand.Intn(100)),
 			Sinopsis:     film.Sinopsis,
 			PosterPath:   downloadPath,
 			Genre:        genres,
