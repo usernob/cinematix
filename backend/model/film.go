@@ -15,7 +15,7 @@ type Film struct {
 	PosterPath   string        `json:"poster_path"`
 	Popularitas  uint          `json:"popularitas" gorm:"default:0"`
 	Genre        []*Genre      `gorm:"many2many:film_genres;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"genre,omitempty"`
-	Penayangan   []*Penayangan `json:"penayangan,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Penayangan   []*Penayangan `json:"penayangan,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CreatedAt    time.Time     `json:"created_at"`
 	UpdatedAt    time.Time     `json:"updated_at"`
 }
@@ -62,7 +62,7 @@ func GetFilmTayang(cooming_soon bool) ([]Film, error) {
 	var films []Film
 
 	res := Db.InnerJoins(
-		fmt.Sprintf("inner join penayangan on penayangan.film_id = films.id and penayangan.mulai %s ?", operator),
+		fmt.Sprintf("inner join penayangan on penayangan.film_id = films.id and penayangan.mulai %s ? and penayangan.deleted_at is null", operator),
 		time.Now().Add(time.Hour*24*7),
 	).
 		Group("films.id").
@@ -73,14 +73,18 @@ func GetFilmTayang(cooming_soon bool) ([]Film, error) {
 
 func GetFilmPopuler() ([]Film, error) {
 	var films []Film
-	res := Db.Order("popularitas desc").Order("rating desc").Limit(10).Find(&films)
+	res := Db.InnerJoins("inner join penayangan on penayangan.film_id = films.id and penayangan.deleted_at is null").
+    Group("films.id").
+    Order("popularitas desc").
+    Order("rating desc").
+    Limit(10).Find(&films)
 	return films, res.Error
 }
 
 func GetFilmHaveTayang() ([]Film, error) {
 	var films []Film
 
-	res := Db.InnerJoins("inner join penayangan on penayangan.film_id = films.id").Group("films.id").Find(&films)
+	res := Db.InnerJoins("inner join penayangan on penayangan.film_id = films.id and penayangan.deleted_at is null").Group("films.id").Find(&films)
 
 	return films, res.Error
 }
@@ -102,7 +106,12 @@ func AddFilm(film Film) error {
   return err.Error
 }
 
-func EditFilm(film Film) error {
-  err := Db.Save(&film)
+func EditFilm(id uint, film Film) error {
+  err := Db.Model(&Film{}).Where("id = ?", id).Updates(&film)
   return err.Error
+}
+
+func DeleteFilm(id uint) error {
+  res := Db.Where("id = ?", id).Delete(&Film{})
+  return res.Error
 }

@@ -14,7 +14,7 @@ export const actions: Actions = {
       return fail(400, {
         missing: true,
         message: 'All fields are required',
-        name,
+        nama,
         email,
         password,
       });

@@ -16,8 +16,8 @@ type Penayangan struct {
 	Harga         uint           `json:"harga"`
 	Mulai         time.Time      `json:"mulai"`
 	Selesai       time.Time      `json:"selesai"`
-	Tiket         []*Tiket       `json:"tiket,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Report        []*Report      `json:"report,omitempty"`
+	Tiket         []*Tiket       `json:"tiket,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Report        []*Report      `json:"report,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`
 	DeletedAt     gorm.DeletedAt `gorm:"index"`

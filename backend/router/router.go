@@ -51,7 +51,8 @@ func SetupRouter() *gin.Engine {
 		superAdmin.POST("/register", controller.AdminRegister)
 		superAdmin.GET("/list-admin", admincontroller.AdminList)
 		superAdmin.DELETE("/:id", admincontroller.DeleteAdmin)
-    superAdmin.PUT("/films/:id", admincontroller.UpdateFilm)
+    superAdmin.PUT("/films/:id", filmcontroller.EditFilm)
+    superAdmin.DELETE("/films/:id", filmcontroller.DeleteFilm)
 	}
 
 	user := r.Group("/user")

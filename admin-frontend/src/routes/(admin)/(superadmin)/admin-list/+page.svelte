@@ -5,16 +5,16 @@
 	import TableBodyRow from 'flowbite-svelte/TableBodyRow.svelte';
 	import TableHead from 'flowbite-svelte/TableHead.svelte';
 	import TableHeadCell from 'flowbite-svelte/TableHeadCell.svelte';
-	import Modal from 'flowbite-svelte/Modal.svelte';
-	import CheckCircleSolid from 'flowbite-svelte-icons/CheckCircleSolid.svelte';
 	import type { PageServerData } from './$types';
 	import { routeApi } from '@/lib/util';
 	import type { ApiResponse } from '@/lib/types/apiResponse';
-	import Button from 'flowbite-svelte/Button.svelte';
+	import ActionModal from '@/components/actionModal.svelte';
 
 	export let data: PageServerData;
 
 	let modalState: boolean = false;
+	let modalMessage: string = '';
+	let modalSuccess: boolean = false;
 
 	const DeleteAdmin = async (id: number) => {
 		const req = await fetch(routeApi(`admin/${id}`), {
@@ -24,9 +24,14 @@
 			},
 		});
 		const res: ApiResponse<null> = await req.json();
+		modalState = true;
 		if (res.status === 'ok') {
 			data.users = data.users.filter((item) => item.id !== id);
-			modalState = true;
+			modalSuccess = true;
+			modalMessage = 'Berhasil Menghapus Admin';
+		} else {
+			modalSuccess = false;
+			modalMessage = 'Gagal Menghapus Admin';
 		}
 	};
 </script>
@@ -47,16 +52,17 @@
 				<TableBodyCell>{item.nama}</TableBodyCell>
 				<TableBodyCell>{item.email}</TableBodyCell>
 				{#if data.user?.role === 'superadmin'}
-					<TableBodyCell><a href="#" class="text-primary-500 hover:underline" on:click={() => DeleteAdmin(item.id)} data-sveltekit-preload-data="tap" >Hapus</a></TableBodyCell>
+					<TableBodyCell
+						><a
+							href="#"
+							class="text-primary-500 hover:underline"
+							on:click={() => DeleteAdmin(item.id)}
+							data-sveltekit-preload-data="tap">Hapus</a
+						></TableBodyCell
+					>
 				{/if}
 			</TableBodyRow>
 		{/each}
 	</TableBody>
-	<Modal bind:open={modalState} size="xs" dismissable={true}>
-		<div class="text-center">
-			<CheckCircleSolid class="mx-auto mb-4 h-20 w-20 text-green-400 dark:text-green-200" />
-			<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Admin Dihapus</h3>
-			<Button on:click={() => (modalState = false)}>OK</Button>
-		</div>
-	</Modal>
+	<ActionModal bind:modalState bind:success={modalSuccess} bind:message={modalMessage} />
 </Table>

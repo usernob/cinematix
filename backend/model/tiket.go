@@ -59,6 +59,15 @@ func UpdateTiketPembayaran(tiket *Tiket) error {
 	if err.Error != nil {
 		return err.Error
 	}
+
+  film, gErr := GetPesanan(tiket.ID, tiket.UserID, Done)
+  if gErr != nil {
+    return gErr
+  }
+  uErr := Db.Model(film).Update("popularitas", gorm.Expr("popularitas + ?", 1))
+  if uErr.Error != nil {
+    return uErr.Error
+  }
 	return nil
 }
 

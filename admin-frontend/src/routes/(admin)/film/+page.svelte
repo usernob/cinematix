@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Table from 'flowbite-svelte/Table.svelte';
 	import TableSearch from 'flowbite-svelte/TableSearch.svelte';
 	import TableBody from 'flowbite-svelte/TableBody.svelte';
 	import TableBodyCell from 'flowbite-svelte/TableBodyCell.svelte';
@@ -8,7 +7,7 @@
 	import TableHeadCell from 'flowbite-svelte/TableHeadCell.svelte';
 	import Button from 'flowbite-svelte/Button.svelte';
 	import { writable } from 'svelte/store';
-	import type { PageData } from '../$types';
+	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import { routeApi } from '@/lib/util';
 	import type { ApiResponse } from '@/lib/types/apiResponse';
@@ -17,28 +16,38 @@
 	export let data: PageData;
 
 	let items: Film[] = [];
-  let searchTerm = '';
+	let searchTerm = '';
 
 	const sortKey = writable('id'); // default sort key
 	const sortDirection = writable(1); // default sort direction (ascending)
 	const sortItems = writable(items.slice()); // make a copy of the items array
 
+	onMount(async () => {
+		const req = await fetch(routeApi('admin/all-films'), {
+			headers: {
+				Authorization: `Bearer ${data.token}`,
+			},
+		});
 
-  onMount(async () => {
-    const req = await fetch(routeApi("admin/all-films"), {
-      headers: {
-        Authorization: `Bearer ${data.token}`,
-      }
-    })
+		const res: ApiResponse<Film[]> = await req.json();
+		if (res.status === 'ok') {
+			items = res.data;
+			sortItems.set(items.slice());
+		}
+	});
 
-    const res: ApiResponse<Film[]> = await req.json()
-    if (res.status === "ok") {
-      items = res.data
-      sortItems.set(items.slice())
-    }
-  })
-
-
+	const deleteFilm = async (id: number) => {
+		const req = await fetch(routeApi(`admin/films/${id}`), {
+			method: 'DELETE',
+			headers: {
+				Authorization: `Bearer ${data.token}`,
+			},
+		});
+		const res = await req.json();
+		if (res.status === 'ok') {
+			items = items.filter((item) => item.id !== id);
+		}
+	};
 
 	// Define a function to sort the items
 	const sortTable = (key: string) => {
@@ -65,13 +74,21 @@
 			return 0;
 		});
 		sortItems.set(sorted);
-	} 
-  $: filteredItems = items.filter((item) => item.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1);
-  $: sortItems.set(filteredItems.slice());
+	}
+	$: filteredItems = items.filter(
+		(item) => item.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
+	);
+	$: sortItems.set(filteredItems.slice());
 </script>
 
-<TableSearch hoverable={true} placeholder="Cari Nama film" bind:inputValue={searchTerm} searchClass="relative" innerDivClass="py-4 flex justify-between items-center gap-4">
-  <Button size="lg" slot="header">Tambah Film</Button>
+<TableSearch
+	hoverable={true}
+	placeholder="Cari Nama film"
+	bind:inputValue={searchTerm}
+	searchClass="relative"
+	innerDivClass="py-4 flex justify-between items-center gap-4"
+>
+	<Button size="lg" slot="header">Tambah Film</Button>
 	<TableHead theadClass="cursor-pointer">
 		<TableHeadCell on:click={() => sortTable('id')}>ID</TableHeadCell>
 		<TableHeadCell on:click={() => sortTable('title')}>Judul</TableHeadCell>
@@ -82,14 +99,24 @@
 		{/if}
 	</TableHead>
 	<TableBody tableBodyClass="divide-y">
-		{#each $sortItems as item}
+		{#each $sortItems as item (item.id)}
 			<TableBodyRow>
 				<TableBodyCell>{item.id}</TableBodyCell>
 				<TableBodyCell>{item.title}</TableBodyCell>
 				<TableBodyCell>{item.rating}</TableBodyCell>
-				<TableBodyCell>{new Date(item.updated_at).toLocaleDateString("id-ID")}</TableBodyCell>
+				<TableBodyCell>{new Date(item.updated_at).toLocaleDateString('id-ID')}</TableBodyCell>
 				{#if data.user?.role === 'superadmin'}
-					<TableBodyCell><a href="/film/{item.id}" class="text-primary-500 hover:underline">Edit</a></TableBodyCell>
+					<TableBodyCell class="flex items-center justify-start gap-2">
+						<a href="/film/{item.id}" class="text-primary-500 hover:underline">Edit</a>
+            <p>|</p>
+						<a
+							href="#"
+							on:click={async () => await deleteFilm(item.id)}
+							class="text-primary-500 hover:underline"
+						>
+							Hapus
+						</a>
+					</TableBodyCell>
 				{/if}
 			</TableBodyRow>
 		{/each}

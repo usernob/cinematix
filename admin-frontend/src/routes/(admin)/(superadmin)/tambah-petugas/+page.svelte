@@ -2,13 +2,14 @@
 	import Label from 'flowbite-svelte/Label.svelte';
 	import Input from 'flowbite-svelte/Input.svelte';
 	import Button from 'flowbite-svelte/Button.svelte';
-	import Modal from 'flowbite-svelte/Modal.svelte';
-	import CheckCircleSolid from 'flowbite-svelte-icons/CheckCircleSolid.svelte';
 	import { applyAction, enhance } from '$app/forms';
 	import type { ActionData } from './$types';
 	import { invalidateAll } from '$app/navigation';
+	import ActionModal from '@/components/actionModal.svelte';
 
 	let modalState: boolean = false;
+	let modalMessage: string = '';
+	let modalSuccess: boolean = false;
 
 	export let form: ActionData;
 </script>
@@ -19,9 +20,13 @@
 		async ({ result }) => {
 			await applyAction(result);
 
+			modalState = true;
 			if (result.type === 'success') {
-				modalState = true;
-        await invalidateAll()
+				modalSuccess = true;
+				modalMessage = 'Petugas baru ditambahkan';
+			} else {
+				modalSuccess = false;
+				modalMessage = 'Petugas gagal ditambahkan';
 			}
 		}}
 >
@@ -68,14 +73,11 @@
 			<p class="text-red-500">{form?.message}</p>
 		</div>
 	{/if}
-	<Modal bind:open={modalState} size="xs" dismissable={true}>
-		<div class="text-center">
-			<CheckCircleSolid class="mx-auto mb-4 h-20 w-20 text-green-400 dark:text-green-200" />
-			<h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-				Akun Berhasil Di Buat
-			</h3>
-			<Button on:click={() => (modalState = false)}>OK</Button>
-		</div>
-	</Modal>
+	<ActionModal
+		bind:modalState
+		bind:success={modalSuccess}
+		bind:message={modalMessage}
+		onConfirm={async () => await invalidateAll()}
+	/>
 	<Button type="submit">Buat Akun</Button>
 </form>

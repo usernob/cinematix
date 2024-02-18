@@ -72,7 +72,7 @@
 			</div>
 			<div class="md:max-w-md lg:max-w-lg">
 				<h2 class="text-2xl font-bold md:text-4xl">{data.resdata?.title}</h2>
-				<Rating count rating={data.resdata?.rating} id="example-4">
+				<Rating count rating={Number(data.resdata?.rating.toFixed(2))} id="example-4">
 					<span class="mx-1.5 h-1 w-1 rounded-full bg-gray-500 dark:bg-gray-400" />
 					<p>imdb</p>
 				</Rating>
