@@ -7,8 +7,6 @@
 	export let data: PageServerData;
 	$: report = data.data;
 
-	$: console.log({ data });
-
 	const groupByDate = (data: Report[]): Record<string, number> => {
 		const returner: Record<string, number> = {};
 		data.forEach((item) => {
@@ -97,12 +95,14 @@
 	};
 </script>
 
-<Card class="max-w-full w-full md:w-1/2">
+<Card class="w-full max-w-full md:w-1/2">
 	<div class="flex justify-between">
 		<div>
-			<h5 class="pb-2 text-3xl font-bold leading-none text-gray-900 dark:text-white">{
-        Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(Object.entries(groupByDate(report)).reduce((a, b) => a + b[1], 0))
-        }</h5>
+			<h5 class="pb-2 text-3xl font-bold leading-none text-gray-900 dark:text-white">
+				{Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(
+					Object.entries(groupByDate(report)).reduce((a, b) => a + b[1], 0)
+				)}
+			</h5>
 			<p class="text-base font-normal text-gray-500 dark:text-gray-400">Pendapatan Minggu Ini</p>
 		</div>
 	</div>

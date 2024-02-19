@@ -34,6 +34,7 @@ func SetupRouter() *gin.Engine {
 		r.GET("/films", filmcontroller.FilmList)
 		r.GET("/films/:id", filmcontroller.FilmDetail)
 		r.GET("/films/:id/:penayangan_id", filmcontroller.FilmDetailPenayangan)
+    r.GET("/genre/search", filmcontroller.GenreSearch)
 		r.GET("/kursi/:penayangan_id", kursicontroller.ShowKursi)
 		r.GET("/kursi/:penayangan_id/:kursi_id", kursicontroller.CheckStatusKursi)
 	}
@@ -52,6 +53,7 @@ func SetupRouter() *gin.Engine {
 		superAdmin.GET("/list-admin", admincontroller.AdminList)
 		superAdmin.DELETE("/:id", admincontroller.DeleteAdmin)
     superAdmin.PUT("/films/:id", filmcontroller.EditFilm)
+    superAdmin.POST("/films", filmcontroller.AddFilm)
     superAdmin.DELETE("/films/:id", filmcontroller.DeleteFilm)
 	}
 

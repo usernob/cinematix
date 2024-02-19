@@ -26,7 +26,7 @@
 			if (result.type === 'success') {
 				const user = result.data?.user;
 				if (user) $session.user = user;
-        await invalidateAll()
+				await invalidateAll();
 				await goto('/');
 			}
 		}}

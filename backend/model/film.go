@@ -2,8 +2,12 @@ package model
 
 import (
 	// "fmt"
+
 	"fmt"
+	"os"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type Film struct {
@@ -74,10 +78,10 @@ func GetFilmTayang(cooming_soon bool) ([]Film, error) {
 func GetFilmPopuler() ([]Film, error) {
 	var films []Film
 	res := Db.InnerJoins("inner join penayangan on penayangan.film_id = films.id and penayangan.deleted_at is null").
-    Group("films.id").
-    Order("popularitas desc").
-    Order("rating desc").
-    Limit(10).Find(&films)
+		Group("films.id").
+		Order("popularitas desc").
+		Order("rating desc").
+		Limit(10).Find(&films)
 	return films, res.Error
 }
 
@@ -89,7 +93,7 @@ func GetFilmHaveTayang() ([]Film, error) {
 	return films, res.Error
 }
 
-func GetFilmDetail(id string) (Film, error) {
+func GetFilmDetail(id uint) (Film, error) {
 	var film Film
 	res := Db.Preload("Genre").Preload("Penayangan").Where("id = ?", id).First(&film)
 	return film, res.Error
@@ -101,17 +105,89 @@ func GetPenayanganSingle(id string, penayangan_id string) (Film, error) {
 	return film, res.Error
 }
 
-func AddFilm(film Film) error {
-  err := Db.Create(&film)
-  return err.Error
+func AddFilm(title string, rating float32, tanggalRilis time.Time, sinopsis string, posterPath string, genreIds []int) error {
+	film := Film{
+		Title:        title,
+		Rating:       rating,
+		TanggalRilis: tanggalRilis,
+		Sinopsis:     sinopsis,
+		PosterPath:   posterPath,
+	}
+
+	err := Db.Create(&film)
+	if err.Error != nil {
+		return err.Error
+	}
+
+	if len(genreIds) > 0 {
+		genres := []Genre{}
+		for _, genreId := range genreIds {
+			genre := Genre{ID: uint(genreId)}
+			genres = append(genres, genre)
+		}
+
+		err := Db.Model(&film).Association("Genre").Append(genres)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
-func EditFilm(id uint, film Film) error {
-  err := Db.Model(&Film{}).Where("id = ?", id).Updates(&film)
-  return err.Error
+func EditFilm(id int, title string, rating float32, tanggalRilis time.Time, sinopsis string, posterPath string, genreIds []int) error {
+	fmt.Println(posterPath)
+	fmt.Println(genreIds)
+	film, err := GetFilmDetail(uint(id))
+	if err != nil {
+		return err
+	}
+
+	film.Title = title
+	film.Rating = rating
+	film.TanggalRilis = tanggalRilis
+	film.Sinopsis = sinopsis
+
+	if posterPath != "" {
+		os.Remove(film.PosterPath)
+		film.PosterPath = posterPath
+	}
+
+	uErr := Db.Model(&Film{ID: uint(id)}).Updates(&film)
+	if uErr.Error != nil {
+		return uErr.Error
+	}
+
+	if len(genreIds) > 0 {
+		genres := []Genre{}
+		for _, genreId := range genreIds {
+			genre := Genre{ID: uint(genreId)}
+			genres = append(genres, genre)
+		}
+
+		err := Db.Model(&film).Association("Genre").Replace(genres)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := Db.Model(&film).Association("Genre").Delete(&film.Genre)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func DeleteFilm(id uint) error {
-  res := Db.Where("id = ?", id).Delete(&Film{})
-  return res.Error
+	res := Db.Where("id = ?", id).Delete(&Film{})
+	return res.Error
+}
+
+func FindGenres(query string) ([]Genre, error) {
+	var genres []Genre
+	res := Db.Where("nama like ?", "%"+query+"%").Find(&genres)
+	fmt.Println(Db.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("LOWER(nama) like ?", "LOWER(%"+query+"%)").Find(&genres)
+	}))
+	return genres, res.Error
 }

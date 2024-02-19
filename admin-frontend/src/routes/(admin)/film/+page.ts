@@ -1,7 +1,7 @@
-import type { PageLoad } from "./$types";
+import type { PageLoad } from './$types';
 
 export const load: PageLoad = () => {
-  return {
-    title: "Film List"
-  }
-}
+	return {
+		title: 'Film List',
+	};
+};

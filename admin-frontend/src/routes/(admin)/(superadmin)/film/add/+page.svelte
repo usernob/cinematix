@@ -12,16 +12,15 @@
 	import PlusSolid from 'flowbite-svelte-icons/PlusSolid.svelte';
 	import SearchOutline from 'flowbite-svelte-icons/SearchOutline.svelte';
 	import { invalidateAll, goto } from '$app/navigation';
-	import type { ActionData, PageData } from './$types';
+	import type { ActionData } from './$types';
 	import { routeApi } from '@/lib/util';
 	import type { Genre } from '@/lib/types/modelTypes';
 	import Modal from 'flowbite-svelte/Modal.svelte';
 	import type { ApiResponse } from '@/lib/types/apiResponse';
 
-	export let data: PageData;
 	export let form: ActionData;
 
-	let genres: Genre[] | undefined = data.film.genre;
+	let genres: Genre[] | undefined;
 	let queryGenre: string = '';
 	let resGenre: Genre[] | null = null;
 
@@ -33,7 +32,7 @@
 
 	let formGenreModal: boolean = false;
 
-	$: posterImg = data.film.poster_path ? routeApi(data.film.poster_path) : '';
+	let posterImg: string = '';
 
 	const posterChange = () => {
 		if (!posterInput.files) return;
@@ -95,10 +94,10 @@
 			modalState = true;
 			if (result.type === 'success') {
 				modalSuccess = true;
-				modalMessage = 'Film Berhasil Diupdate';
+				modalMessage = 'Film Berhasil Ditambahkan';
 			} else {
 				modalSuccess = false;
-				modalMessage = 'Film Gagal Diupdate';
+				modalMessage = 'Film Gagal Ditambahkan';
 			}
 		}}
 >
@@ -109,7 +108,6 @@
 				<div class="relative cursor-pointer overflow-hidden rounded-lg">
 					<Img
 						src={posterImg}
-						alt={data.film.title}
 						figClass="w-full"
 						imgClass="aspect-[9.2/13] h-auto w-52 max-w-max object-cover rounded-lg md:w-64"
 					/>
@@ -120,6 +118,7 @@
 						type="file"
 						name="poster"
 						class="hidden"
+						required
 						bind:this={posterInput}
 						on:change={posterChange}
 					/>
@@ -129,35 +128,15 @@
 		<div class="w-full flex-1">
 			<Label class="mb-4 space-y-2">
 				<span>Judul Film</span>
-				<Input
-					type="text"
-					placeholder="Something..."
-					size="md"
-					value={data.film.title}
-					name="title"
-					required
-				/>
+				<Input type="text" placeholder="Something..." size="md" name="title" required />
 			</Label>
 			<Label class="mb-4 space-y-2">
 				<span>Rating</span>
-				<Input
-					type="text"
-					pattern="\d+(\.\d+)?"
-					size="md"
-					value={data.film.rating}
-					name="rating"
-					required
-				/>
+				<Input type="text" pattern="\d+(\.\d+)?" size="md" name="rating" required />
 			</Label>
 			<Label class="mb-4 space-y-2">
 				<span>Tanggal Rilis</span>
-				<Input
-					type="date"
-					size="md"
-					value={new Date(data.film.tanggal_rilis).toISOString().split('T')[0]}
-					name="tanggal_rilis"
-					required
-				/>
+				<Input type="date" size="md" name="tanggal_rilis" required />
 			</Label>
 			<Label class="mb-4 space-y-2">
 				<span>Genre</span>
@@ -189,14 +168,7 @@
 		</div>
 	</div>
 	<Label for="sinopsis" class="mb-2 mt-4">Sinopsis</Label>
-	<Textarea
-		id="sinopsi"
-		placeholder="Pada zaman dahulu..."
-		rows="4"
-		name="sinopsis"
-		value={data.film.sinopsis}
-		required
-	/>
+	<Textarea id="sinopsi" placeholder="Pada zaman dahulu..." rows="4" name="sinopsis" required />
 	{#if form?.message}
 		<div class="text-md mb-2 block w-full rounded-lg border-2 border-red-400 bg-red-400/30 p-2.5">
 			<p class="text-red-500">{form?.message}</p>

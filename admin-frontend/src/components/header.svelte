@@ -20,8 +20,8 @@
 
 	export let title: string = 'Films';
 	export let user: User | null = null;
-  export let activeUrl: string;
-  export let routes: string[] = [];
+	export let activeUrl: string;
+	export let routes: string[] = [];
 
 	let transitionParams = {
 		x: -320,
@@ -57,17 +57,15 @@
 	};
 	const toggleDrawer = () => {
 		drawerHidden = false;
-		console.log('hiii');
 	};
 	$: activeUrl = $page.url.pathname;
-	$: console.log(activeUrl);
 </script>
 
 <svelte:head>
-  <title>{title}</title>
+	<title>{title}</title>
 </svelte:head>
 <svelte:window bind:innerWidth={width} />
-<header class="fixed top-0 z-50 mx-auto flex w-full px-4">
+<header class="fixed top-0 z-50 mx-auto flex w-full px-4 shadow-lg">
 	<Navbar fluid class="!px-0 lg:ml-64">
 		<NavHamburger onClick={toggleDrawer} class="m-0 p-0 lg:hidden" />
 		<div class="font-bold md:text-2xl">
@@ -124,15 +122,15 @@
 		<SidebarWrapper divClass="overflow-y-auto py-4 px-3 rounded dark:bg-gray-800">
 			<SidebarGroup>
 				<SidebarItem label="Dasboard" href="/" on:click={toggleSide} />
-					{#each routes as route}
-						<SidebarItem
-							label={route.replaceAll('-', ' ')}
-							class="capitalize"
-							href={'/' + route}
-							on:click={toggleSide}
-							active={activeUrl === `/${route}`}
-						/>
-					{/each}
+				{#each routes as route}
+					<SidebarItem
+						label={route.replaceAll('-', ' ')}
+						class="capitalize"
+						href={'/' + route}
+						on:click={toggleSide}
+						active={activeUrl === `/${route}`}
+					/>
+				{/each}
 			</SidebarGroup>
 		</SidebarWrapper>
 	</Sidebar>

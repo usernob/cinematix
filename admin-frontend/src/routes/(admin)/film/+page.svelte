@@ -37,6 +37,8 @@
 	});
 
 	const deleteFilm = async (id: number) => {
+		let conf = confirm('apakah kamu yakin ingin menghapus film ini ?');
+		if (!conf) return;
 		const req = await fetch(routeApi(`admin/films/${id}`), {
 			method: 'DELETE',
 			headers: {
@@ -64,7 +66,9 @@
 		const key = $sortKey;
 		const direction = $sortDirection;
 		const sorted = [...$sortItems].sort((a: Film, b: Film): number => {
+			// @ts-ignore
 			const aVal = a[key];
+			// @ts-ignore
 			const bVal = b[key];
 			if (aVal < bVal) {
 				return -direction;
@@ -75,9 +79,11 @@
 		});
 		sortItems.set(sorted);
 	}
+
 	$: filteredItems = items.filter(
 		(item) => item.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
 	);
+
 	$: sortItems.set(filteredItems.slice());
 </script>
 
@@ -88,7 +94,7 @@
 	searchClass="relative"
 	innerDivClass="py-4 flex justify-between items-center gap-4"
 >
-	<Button size="lg" slot="header">Tambah Film</Button>
+	<Button size="lg" slot="header" href="/film/add">Tambah Film</Button>
 	<TableHead theadClass="cursor-pointer">
 		<TableHeadCell on:click={() => sortTable('id')}>ID</TableHeadCell>
 		<TableHeadCell on:click={() => sortTable('title')}>Judul</TableHeadCell>
@@ -108,7 +114,7 @@
 				{#if data.user?.role === 'superadmin'}
 					<TableBodyCell class="flex items-center justify-start gap-2">
 						<a href="/film/{item.id}" class="text-primary-500 hover:underline">Edit</a>
-            <p>|</p>
+						<p>|</p>
 						<a
 							href="#"
 							on:click={async () => await deleteFilm(item.id)}

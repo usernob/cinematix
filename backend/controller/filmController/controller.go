@@ -3,12 +3,10 @@ package filmcontroller
 import (
 	"backend/controller"
 	"backend/model"
-	"backend/pkg/logjson"
 	"fmt"
 	"math/rand"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"path"
 	"strconv"
 	"time"
@@ -62,13 +60,18 @@ func FilmList(c *gin.Context) {
 }
 
 func FilmDetail(c *gin.Context) {
-	id := c.Param("id")
-	data, err := model.GetFilmDetail(id)
+	strid := c.Param("id")
+	id, convErr := strconv.Atoi(strid)
+	if convErr != nil {
+		c.JSON(http.StatusBadRequest, controller.Response(controller.Error, convErr.Error(), nil))
+		return
+	}
+
+	data, err := model.GetFilmDetail(uint(id))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
 		return
 	}
-	logjson.ToJSON(data)
 	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
 }
 
@@ -85,10 +88,11 @@ func FilmDetailPenayangan(c *gin.Context) {
 }
 
 type FilmRequest struct {
-	Title        string                `form:"title"`
-	Rating       float32               `form:"rating"`
-	TanggalRilis time.Time             `form:"tanggal_rilis" time_format:"2006-01-02"`
-	Sinopsis     string                `form:"sinopsis"`
+	Title        string                `form:"title" binding:"required"`
+	Rating       float32               `form:"rating" binding:"required"`
+	TanggalRilis time.Time             `form:"tanggal_rilis" time_format:"2006-01-02" binding:"required"`
+	Sinopsis     string                `form:"sinopsis" binding:"required"`
+	Genres       []string              `form:"genres[]"`
 	Poster       *multipart.FileHeader `form:"poster"`
 }
 
@@ -100,21 +104,30 @@ func AddFilm(c *gin.Context) {
 		return
 	}
 
+	if req.Poster == nil {
+		c.JSON(http.StatusBadRequest, controller.Response(controller.Error, "Poster is required", nil))
+		return
+	}
 	fileSavedPath := path.Join("storage", "image", "poster", fmt.Sprintf("%d-%d.png", rand.Intn(80), time.Now().Unix()))
-	if req.Poster != nil {
-		if err := c.SaveUploadedFile(req.Poster, fileSavedPath); err != nil {
-			c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
-			return
+
+	if err := c.SaveUploadedFile(req.Poster, fileSavedPath); err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+
+	var genres []int
+	if req.Genres != nil {
+		for _, genre := range req.Genres {
+			genreId, err := strconv.Atoi(genre)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+				return
+			}
+			genres = append(genres, genreId)
 		}
 	}
 
-	addErr := model.AddFilm(model.Film{
-		Title:        req.Title,
-		Rating:       req.Rating,
-		TanggalRilis: req.TanggalRilis,
-		Sinopsis:     req.Sinopsis,
-		PosterPath:   fileSavedPath,
-	})
+	addErr := model.AddFilm(req.Title, req.Rating, req.TanggalRilis, req.Sinopsis, fileSavedPath, genres)
 
 	if addErr != nil {
 		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, addErr.Error(), nil))
@@ -131,12 +144,6 @@ func EditFilm(c *gin.Context) {
 		return
 	}
 
-	film, err := model.GetFilmDetail(strid)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
-		return
-	}
-
 	var req FilmRequest
 
 	bindErr := c.ShouldBindWith(&req, binding.FormMultipart)
@@ -145,45 +152,58 @@ func EditFilm(c *gin.Context) {
 		return
 	}
 
-
-	fileSavedPath := path.Join("storage", "image", "poster", fmt.Sprintf("%d-%d.png", id, time.Now().Unix()))
+	var fileSavedPath string
 	if req.Poster != nil {
-		removeErr := os.Remove(film.PosterPath)
-		if removeErr != nil {
-			c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, removeErr.Error(), nil))
-			return
-		}
-		if err := c.SaveUploadedFile(req.Poster, fileSavedPath); err != nil {
+		fileSavedPath = path.Join("storage", "image", "poster", fmt.Sprintf("%d-%d.png", id, time.Now().Unix()))
+		err := c.SaveUploadedFile(req.Poster, fileSavedPath)
+		if err != nil {
 			c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
 			return
 		}
-    film.PosterPath = fileSavedPath
 	}
-  film.Title = req.Title
-  film.Rating = req.Rating
-  film.TanggalRilis = req.TanggalRilis
-  film.Sinopsis = req.Sinopsis
 
-	editErr := model.EditFilm(uint(id), film)
+	var genres []int
+	if req.Genres != nil {
+		for _, genre := range req.Genres {
+			genreId, err := strconv.Atoi(genre)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+				return
+			}
+			genres = append(genres, genreId)
+		}
+	}
+
+	editErr := model.EditFilm(id, req.Title, req.Rating, req.TanggalRilis, req.Sinopsis, fileSavedPath, genres)
 	if editErr != nil {
 		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, editErr.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", film))
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
 }
 
 func DeleteFilm(c *gin.Context) {
-  strid := c.Param("id")
-  id, convErr := strconv.Atoi(strid)
-  if convErr != nil {
-    c.JSON(http.StatusBadRequest, controller.Response(controller.Error, convErr.Error(), nil))
-    return
-  }
-  err := model.DeleteFilm(uint(id))
-  if err != nil {
-    c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
-    return
-  }
-  c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
+	strid := c.Param("id")
+	id, convErr := strconv.Atoi(strid)
+	if convErr != nil {
+		c.JSON(http.StatusBadRequest, controller.Response(controller.Error, convErr.Error(), nil))
+		return
+	}
+	err := model.DeleteFilm(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
+}
+
+func GenreSearch(c *gin.Context) {
+	genre := c.Query("q")
+	data, err := model.FindGenres(genre)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
 }

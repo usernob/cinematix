@@ -5,30 +5,30 @@ import type { ApiResponse } from '@/lib/types/apiResponse';
 import { redirect } from '@sveltejs/kit';
 
 export async function load(event: LayoutServerLoadEvent) {
-  const token = event.cookies.get('admin-token');
+	const token = event.cookies.get('admin-token');
 
-  event.depends('reload:user');
+	event.depends('reload:user');
 
-  if (!token) {
-    return { token: null, user: null };
-  }
+	if (!token) {
+		return { token: null, user: null };
+	}
 
-  if (event.locals?.user) {
-    return { token, user: event.locals.user };
-  }
+	if (event.locals?.user) {
+		return { token, user: event.locals.user };
+	}
 
-  const getData = await event.fetch(routeApi('admin/info'));
+	const getData = await event.fetch(routeApi('admin/info'));
 
-  const res: ApiResponse<User> = await getData.json();
+	const res: ApiResponse<User> = await getData.json();
 
-  if (res.status === 'ok' || res.data) {
-    delete res.data.password;
-    event.locals.user = res.data;
-  } else {
-    throw redirect(302, '/login');
-  }
+	if (res.status === 'ok' || res.data) {
+		delete res.data.password;
+		event.locals.user = res.data;
+	} else {
+		throw redirect(302, '/login');
+	}
 
-  const user = event.locals?.user;
-  if (!user) return { token, user: null };
-  return { token, user };
+	const user = event.locals?.user;
+	if (!user) return { token, user: null };
+	return { token, user };
 }

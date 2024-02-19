@@ -10,7 +10,13 @@
 	export let onConfirm = async () => {};
 </script>
 
-<Modal bind:open={modalState} size="xs" dismissable={true}>
+<Modal
+	bind:open={modalState}
+	size="xs"
+	dismissable={true}
+	backdropClass="fixed inset-0 z-[80] bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
+	dialogClass="fixed top-0 start-0 end-0 h-modal md:inset-0 md:h-full z-[90] w-full p-4 flex"
+>
 	<div class="text-center">
 		{#if success}
 			<CheckCircleSolid class="mx-auto mb-4 h-20 w-20 text-green-400 dark:text-green-200" />
