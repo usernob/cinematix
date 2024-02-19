@@ -1,13 +1,9 @@
 package model
 
 import (
-	// "fmt"
-
 	"fmt"
 	"os"
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Film struct {
@@ -185,9 +181,34 @@ func DeleteFilm(id uint) error {
 
 func FindGenres(query string) ([]Genre, error) {
 	var genres []Genre
-	res := Db.Where("nama like ?", "%"+query+"%").Find(&genres)
-	fmt.Println(Db.ToSQL(func(tx *gorm.DB) *gorm.DB {
-		return tx.Where("LOWER(nama) like ?", "LOWER(%"+query+"%)").Find(&genres)
-	}))
+	res := Db.Where("LOWER(nama) like ?", "%"+query+"%").Find(&genres)
 	return genres, res.Error
+}
+
+func GenreList() ([]Genre, error) {
+	var genres []Genre
+	res := Db.Find(&genres)
+	return genres, res.Error
+}
+
+func GenreDetail(id uint) (Genre, error) {
+	var genre Genre
+	res := Db.Where("id = ?", id).First(&genre)
+	return genre, res.Error
+}
+
+func AddGenre(nama string) error {
+	genre := Genre{Nama: nama}
+	res := Db.Create(&genre)
+	return res.Error
+}
+
+func EditGenre(id uint, nama string) error {
+	res := Db.Model(&Genre{ID: id}).Updates(&Genre{Nama: nama})
+	return res.Error
+}
+
+func DeleteGenre(id uint) error {
+	res := Db.Where("id = ?", id).Unscoped().Delete(&Genre{})
+	return res.Error
 }

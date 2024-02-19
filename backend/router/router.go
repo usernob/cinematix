@@ -28,13 +28,18 @@ func SetupRouter() *gin.Engine {
 		r.POST("/login/user", controller.UserLogin)
 		r.POST("/register/user", controller.UserRegister)
 		r.POST("/login/admin", controller.AdminLogin)
+
 		r.GET("/films/tayang", filmcontroller.FilmTayang)
 		r.GET("/films/akan-tayang", filmcontroller.FilmAkanTayang)
 		r.GET("/films/populer", filmcontroller.FilmPopuler)
 		r.GET("/films", filmcontroller.FilmList)
 		r.GET("/films/:id", filmcontroller.FilmDetail)
 		r.GET("/films/:id/:penayangan_id", filmcontroller.FilmDetailPenayangan)
+
     r.GET("/genre/search", filmcontroller.GenreSearch)
+    r.GET("/genre", filmcontroller.GenreList)
+    r.GET("/genre/:id", filmcontroller.GenreDetail)
+
 		r.GET("/kursi/:penayangan_id", kursicontroller.ShowKursi)
 		r.GET("/kursi/:penayangan_id/:kursi_id", kursicontroller.CheckStatusKursi)
 	}
@@ -52,9 +57,14 @@ func SetupRouter() *gin.Engine {
 		superAdmin.POST("/register", controller.AdminRegister)
 		superAdmin.GET("/list-admin", admincontroller.AdminList)
 		superAdmin.DELETE("/:id", admincontroller.DeleteAdmin)
+
     superAdmin.PUT("/films/:id", filmcontroller.EditFilm)
     superAdmin.POST("/films", filmcontroller.AddFilm)
     superAdmin.DELETE("/films/:id", filmcontroller.DeleteFilm)
+
+    superAdmin.POST("/genre", filmcontroller.AddGenre)
+    superAdmin.PUT("/genre/:id", filmcontroller.EditGenre)
+    superAdmin.DELETE("/genre/:id", filmcontroller.DeleteGenre)
 	}
 
 	user := r.Group("/user")
@@ -63,6 +73,7 @@ func SetupRouter() *gin.Engine {
 	{
 		user.GET("/info", usercontroller.GetUserInformation)
 		user.PUT("/profile/update", usercontroller.UpdateProfile)
+
 		user.POST("/pesanan/add", usercontroller.AddPesanan)
 		user.POST("/pesanan/update-pembayaran", usercontroller.UpdatePembayaran)
 		user.GET("/pesanan", usercontroller.GetAllPesanan)

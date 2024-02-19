@@ -16,6 +16,7 @@ export type Film = BaseModel & {
 
 export type Genre = BaseModel & {
 	nama: string;
+	updated_at: string;
 };
 
 export type Penayangan = BaseModel & {

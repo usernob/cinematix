@@ -9,12 +9,16 @@
 	import { routeApi } from '@/lib/util';
 	import type { ApiResponse } from '@/lib/types/apiResponse';
 	import ActionModal from '@/components/actionModal.svelte';
+	import ConfirmationModal from '@/components/confirmationModal.svelte';
 
 	export let data: PageServerData;
 
 	let modalState: boolean = false;
 	let modalMessage: string = '';
 	let modalSuccess: boolean = false;
+
+	let modalConfirm: boolean = false;
+	let deleteId: number;
 
 	const DeleteAdmin = async (id: number) => {
 		const req = await fetch(routeApi(`admin/${id}`), {
@@ -52,17 +56,27 @@
 				<TableBodyCell>{item.nama}</TableBodyCell>
 				<TableBodyCell>{item.email}</TableBodyCell>
 				{#if data.user?.role === 'superadmin'}
-					<TableBodyCell
-						><a
+					<TableBodyCell>
+						<a
 							href="#"
 							class="text-primary-500 hover:underline"
-							on:click={() => DeleteAdmin(item.id)}
-							data-sveltekit-preload-data="tap">Hapus</a
-						></TableBodyCell
-					>
+							on:click={() => {
+								modalConfirm = true;
+								deleteId = item.id;
+							}}
+							data-sveltekit-preload-data="tap"
+						>
+							Hapus
+						</a>
+					</TableBodyCell>
 				{/if}
 			</TableBodyRow>
 		{/each}
 	</TableBody>
-	<ActionModal bind:modalState bind:success={modalSuccess} bind:message={modalMessage} />
 </Table>
+<ActionModal bind:modalState bind:success={modalSuccess} bind:message={modalMessage} />
+<ConfirmationModal
+	bind:modalState={modalConfirm}
+	message="apakah kamu yakin ingin menghapus admin ini?"
+	onConfirm={() => DeleteAdmin(deleteId)}
+/>

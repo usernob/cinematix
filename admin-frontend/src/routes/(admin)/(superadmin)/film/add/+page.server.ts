@@ -6,7 +6,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = () => {
 	return {
-		title: 'Film Tambah',
+		title: 'Tambah Film',
 	};
 };
 

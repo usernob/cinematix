@@ -78,6 +78,6 @@ func CreateAdmin(nama string, email string, password string) (*Admin, error) {
 }
 
 func DeleteAdmin(id uint) error {
-	res := Db.Where("id = ?", id).Delete(&Admin{})
+	res := Db.Where("id = ?", id).Unscoped().Delete(&Admin{})
 	return res.Error
 }

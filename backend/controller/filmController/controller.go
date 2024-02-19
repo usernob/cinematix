@@ -207,3 +207,85 @@ func GenreSearch(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
 }
+
+func GenreList(c *gin.Context) {
+	data, err := model.GenreList()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
+}
+
+func GenreDetail(c *gin.Context) {
+	strid := c.Param("id")
+	id, convErr := strconv.Atoi(strid)
+	if convErr != nil {
+		c.JSON(http.StatusBadRequest, controller.Response(controller.Error, convErr.Error(), nil))
+		return
+	}
+	data, err := model.GenreDetail(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
+}
+
+type GenreRequest struct {
+	Nama string `json:"nama" form:"nama" binding:"required"`
+}
+
+func AddGenre(c *gin.Context) {
+	var req GenreRequest
+	err := c.ShouldBind(&req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	addErr := model.AddGenre(req.Nama)
+	if addErr != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, addErr.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
+}
+
+func EditGenre(c *gin.Context) {
+	var req GenreRequest
+	strid := c.Param("id")
+	id, convErr := strconv.Atoi(strid)
+	if convErr != nil {
+		c.JSON(http.StatusBadRequest, controller.Response(controller.Error, convErr.Error(), nil))
+		return
+	}
+
+	err := c.ShouldBind(&req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+
+	editErr := model.EditGenre(uint(id), req.Nama)
+	if editErr != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, editErr.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
+}
+
+func DeleteGenre(c *gin.Context) {
+	strid := c.Param("id")
+	id, convErr := strconv.Atoi(strid)
+	if convErr != nil {
+		c.JSON(http.StatusBadRequest, controller.Response(controller.Error, convErr.Error(), nil))
+		return
+	}
+
+	err := model.DeleteGenre(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
+}

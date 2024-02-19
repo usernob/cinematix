@@ -11,37 +11,36 @@
 	import { onMount } from 'svelte';
 	import { routeApi } from '@/lib/util';
 	import type { ApiResponse } from '@/lib/types/apiResponse';
-	import type { Film } from '@/lib/types/modelTypes';
+	import type { Genre } from '@/lib/types/modelTypes';
 	import ConfirmationModal from '@/components/confirmationModal.svelte';
 
 	export let data: PageData;
 
-	let items: Film[] = [];
+	let items: Genre[] = [];
 	let searchTerm = '';
 
 	let modalConfirm: boolean = false;
 	let deleteId: number;
-
 	const sortKey = writable('id'); // default sort key
 	const sortDirection = writable(1); // default sort direction (ascending)
 	const sortItems = writable(items.slice()); // make a copy of the items array
 
 	onMount(async () => {
-		const req = await fetch(routeApi('admin/all-films'), {
+		const req = await fetch(routeApi('genre'), {
 			headers: {
 				Authorization: `Bearer ${data.token}`,
 			},
 		});
 
-		const res: ApiResponse<Film[]> = await req.json();
+		const res: ApiResponse<Genre[]> = await req.json();
 		if (res.status === 'ok') {
 			items = res.data;
 			sortItems.set(items.slice());
 		}
 	});
 
-	const deleteFilm = async (id: number) => {
-		const req = await fetch(routeApi(`admin/films/${id}`), {
+	const deleteGenre = async (id: number) => {
+		const req = await fetch(routeApi(`admin/genre/${id}`), {
 			method: 'DELETE',
 			headers: {
 				Authorization: `Bearer ${data.token}`,
@@ -67,7 +66,7 @@
 	$: {
 		const key = $sortKey;
 		const direction = $sortDirection;
-		const sorted = [...$sortItems].sort((a: Film, b: Film): number => {
+		const sorted = [...$sortItems].sort((a: Genre, b: Genre): number => {
 			// @ts-ignore
 			const aVal = a[key];
 			// @ts-ignore
@@ -83,7 +82,7 @@
 	}
 
 	$: filteredItems = items.filter(
-		(item) => item.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
+		(item) => item.nama.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
 	);
 
 	$: sortItems.set(filteredItems.slice());
@@ -98,13 +97,12 @@
 >
 	<div slot="header">
 		{#if data.user?.role === 'superadmin'}
-			<Button size="lg" href="/film/add">Tambah Film</Button>
+			<Button size="lg" href="/genre/add">Tambah Genre</Button>
 		{/if}
 	</div>
 	<TableHead theadClass="cursor-pointer">
 		<TableHeadCell on:click={() => sortTable('id')}>ID</TableHeadCell>
-		<TableHeadCell on:click={() => sortTable('title')}>Judul</TableHeadCell>
-		<TableHeadCell on:click={() => sortTable('rating')}>Rating</TableHeadCell>
+		<TableHeadCell on:click={() => sortTable('nama')}>Nama</TableHeadCell>
 		<TableHeadCell on:click={() => sortTable('updated_at')}>Terakhir Diubah</TableHeadCell>
 		{#if data.user?.role === 'superadmin'}
 			<TableHeadCell>Aksi</TableHeadCell>
@@ -114,14 +112,13 @@
 		{#each $sortItems as item (item.id)}
 			<TableBodyRow>
 				<TableBodyCell>{item.id}</TableBodyCell>
-				<TableBodyCell>{item.title}</TableBodyCell>
-				<TableBodyCell>{item.rating}</TableBodyCell>
+				<TableBodyCell>{item.nama}</TableBodyCell>
 				<TableBodyCell>{new Date(item.updated_at).toLocaleDateString('id-ID')}</TableBodyCell>
 				{#if data.user?.role === 'superadmin'}
 					<TableBodyCell
 						class="flex items-center justify-start divide-x divide-gray-700 dark:divide-gray-400"
 					>
-						<a href="/film/{item.id}" class="pr-2 text-primary-500 hover:underline">Edit</a>
+						<a href="/genre/{item.id}" class="pr-2 text-primary-500 hover:underline">Edit</a>
 						<a
 							href="#"
 							on:click={() => {
@@ -141,5 +138,5 @@
 <ConfirmationModal
 	bind:modalState={modalConfirm}
 	message="apakah kamu yakin ingin menghapus film ini?"
-	onConfirm={() => deleteFilm(deleteId)}
+	onConfirm={() => deleteGenre(deleteId)}
 />

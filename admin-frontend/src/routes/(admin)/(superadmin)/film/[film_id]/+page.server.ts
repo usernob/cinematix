@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 
 	return {
 		film: res.data,
-		title: 'Film Edit',
+		title: 'Edit Film',
 		film_id: parseInt(params.film_id),
 	};
 };

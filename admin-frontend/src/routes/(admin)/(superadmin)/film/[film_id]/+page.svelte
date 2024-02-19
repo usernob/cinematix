@@ -68,10 +68,7 @@
 	};
 
 	const findGenre = async (nama: string) => {
-		const uppercaseNama: string = nama
-			.split(' ')
-			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-			.join(' ');
+		const uppercaseNama: string = nama.toLowerCase();
 		const req = await fetch(routeApi('genre/search?' + new URLSearchParams({ q: uppercaseNama })), {
 			headers: {
 				'Content-Type': 'application/x-www-form-urlencoded',
@@ -204,6 +201,15 @@
 	{/if}
 
 	<Button type="submit" class="mt-8">Update</Button>
+	<Button
+		type="button"
+		color="alternative"
+		on:click={async () => {
+			await invalidateAll();
+			await goto('/film');
+		}}
+		class="mt-8">Batal</Button
+	>
 	<Modal
 		bind:open={formGenreModal}
 		backdropClass="fixed inset-0 z-[80] bg-gray-900 bg-opacity-50 dark:bg-opacity-80"
