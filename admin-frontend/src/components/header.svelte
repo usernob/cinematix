@@ -14,7 +14,6 @@
 	import NavHamburger from 'flowbite-svelte/NavHamburger.svelte';
 	import { routeApi } from '@/lib/util';
 	import type { User } from '@/lib/types/modelTypes';
-	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { sineIn } from 'svelte/easing';
 
@@ -58,7 +57,8 @@
 	const toggleDrawer = () => {
 		drawerHidden = false;
 	};
-	$: activeUrl = $page.url.pathname;
+
+	$: activeRootUrl = '/' + activeUrl.split('/')[1];
 </script>
 
 <svelte:head>
@@ -111,7 +111,7 @@
 	</div>
 	<Sidebar
 		asideClass="w-54"
-		{activeUrl}
+		activeUrl={activeRootUrl}
 		activeClass="
       flex items-center 
       p-2 text-base font-normal text-primary-900 

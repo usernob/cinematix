@@ -89,10 +89,17 @@ func GetFilmHaveTayang() ([]Film, error) {
 	return films, res.Error
 }
 
+
 func GetFilmDetail(id uint) (Film, error) {
 	var film Film
 	res := Db.Preload("Genre").Preload("Penayangan").Where("id = ?", id).First(&film)
 	return film, res.Error
+}
+
+func FindFilm(query string) ([]Film, error) {
+  var films []Film
+  res := Db.Where("LOWER(title) like ?", "%"+query+"%").Find(&films)
+  return films, res.Error
 }
 
 func GetPenayanganSingle(id string, penayangan_id string) (Film, error) {

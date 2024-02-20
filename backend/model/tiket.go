@@ -2,7 +2,6 @@ package model
 
 import (
 	"database/sql/driver"
-	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -14,6 +13,7 @@ type Tiket struct {
 	StatusPembayaran Status_Pembayaran `sql:"type:status_pembayaran" json:"status_pembayaran"`
 	UserID           uint              `json:"user_id"`
 	PenayanganID     uint              `json:"penyangan_id"`
+	SignedBy         *uint             `json:"signed_by"`
 	Kursi            []*Kursi          `gorm:"many2many:seats;constraint:OnUpdate:CASCADE,OnDelete:CASCADE" json:"kursi,omitempty"`
 	CreatedAt        time.Time         `json:"created_at"`
 	UpdatedAt        time.Time         `json:"updated_at"`
@@ -60,14 +60,14 @@ func UpdateTiketPembayaran(tiket *Tiket) error {
 		return err.Error
 	}
 
-  film, gErr := GetPesanan(tiket.ID, tiket.UserID, Done)
-  if gErr != nil {
-    return gErr
-  }
-  uErr := Db.Model(film).Update("popularitas", gorm.Expr("popularitas + ?", 1))
-  if uErr.Error != nil {
-    return uErr.Error
-  }
+	film, gErr := GetPesanan(tiket.ID, tiket.UserID, Done)
+	if gErr != nil {
+		return gErr
+	}
+	uErr := Db.Model(film).Update("popularitas", gorm.Expr("popularitas + ?", 1))
+	if uErr.Error != nil {
+		return uErr.Error
+	}
 	return nil
 }
 
@@ -95,7 +95,7 @@ func GetPesanan(tiketid uint, userid uint, status Status_Pembayaran) (*Film, err
 
 func GetAllTiket(userid uint) ([]*Tiket, error) {
 	var tikets []*Tiket
-	err := Db.Where(&Tiket{UserID: userid}).Find(&tikets)
+	err := Db.Where(&Tiket{UserID: userid}).Order("updated_at DESC").Find(&tikets)
 	if err.Error != nil {
 		return nil, err.Error
 	}
@@ -111,12 +111,11 @@ func DeleteExpTiket() {
 	}
 
 	for _, tik := range tikets {
-		if tik.UpdatedAt.Add(time.Minute * 2).Before(time.Now()) {
+		if tik.UpdatedAt.Add(time.Minute * 30).Before(time.Now()) {
 			tiketExp = append(tiketExp, *tik)
-			fmt.Println(tik.UpdatedAt, time.Now())
 		}
 	}
 	if len(tiketExp) > 0 {
-		Db.Select("Kursi").Delete(&tiketExp)
+		Db.Select("Kursi").Unscoped().Delete(&tiketExp)
 	}
 }

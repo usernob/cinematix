@@ -119,6 +119,7 @@
 						class="flex items-center justify-start divide-x divide-gray-700 dark:divide-gray-400"
 					>
 						<a href="/genre/{item.id}" class="pr-2 text-primary-500 hover:underline">Edit</a>
+						<!-- svelte-ignore a11y-invalid-attribute -->
 						<a
 							href="#"
 							on:click={() => {
@@ -137,6 +138,6 @@
 </TableSearch>
 <ConfirmationModal
 	bind:modalState={modalConfirm}
-	message="apakah kamu yakin ingin menghapus film ini?"
+	message="apakah kamu yakin ingin menghapus genre ini?"
 	onConfirm={() => deleteGenre(deleteId)}
 />

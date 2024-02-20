@@ -14,6 +14,7 @@ type Penayangan struct {
 	Film          *Film          `json:"film,omitempty"`
 	AudiotoriumID uint           `json:"audiotorium_id"`
 	Harga         uint           `json:"harga"`
+	Tanggal       time.Time      `json:"tanggal"`
 	Mulai         time.Time      `json:"mulai"`
 	Selesai       time.Time      `json:"selesai"`
 	Tiket         []*Tiket       `json:"tiket,omitempty" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -35,21 +36,30 @@ func GetPenayangan(penayangan *Penayangan) (*Penayangan, error) {
 	return penayangan, nil
 }
 
+func GetListPenayangan() ([]Penayangan, error) {
+	var penayangans []Penayangan
+	res := Db.Preload("Film").Find(&penayangans)
+	return penayangans, res.Error
+}
+
+func GetPenayanganDetail(id uint) (Penayangan, error) {
+	var penayangan Penayangan
+	res := Db.Preload("Film").Where("id = ?", id).First(&penayangan)
+	return penayangan, res.Error
+}
+
 func GetKursi(penayanganId uint) ([]*Kursi, error) {
 	var kursi []*Kursi
 	penayangan := &Penayangan{ID: penayanganId}
 	penayangan, err := GetPenayangan(penayangan)
-	logjson.ToJSON(penayangan)
 	if err != nil {
 		return nil, err
 	}
 
 	var tiket []Tiket
 	Db.Where("penayangan_id = ?", penayangan.ID).Find(&tiket)
-	logjson.ToJSON(tiket)
 	res := Db.Preload("Tiket.Kursi").Preload("Tiket", Db.Where("penayangan_id = ?", penayangan.ID)).Where("audiotorium_id = ?", penayangan.AudiotoriumID).Find(&kursi)
 
-	logjson.ToJSON(kursi)
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -97,4 +107,50 @@ func DeleteExpPenayangan() error {
 	}
 
 	return nil
+}
+
+func checkJadwalPenayangan(id uint, tanggal time.Time, mulai time.Time, selesai time.Time, audiotorium_id uint) bool {
+	var penayangans []Penayangan
+	res := Db.Where("id != ?", id).Where("audiotorium_id = ?", audiotorium_id).Where("tanggal = ?", tanggal).Where("mulai BETWEEN ? AND ?", mulai, selesai).Or("selesai BETWEEN ? AND ?", mulai, selesai).Find(&penayangans)
+  logjson.ToJSON(penayangans)
+  if res.Error != nil {
+    return true
+  }
+	return len(penayangans) > 0 
+}
+
+
+func AddPenayangan(film_id uint, tanggal time.Time, mulai time.Time, selesai time.Time, audiotorium_id uint, harga uint) error {
+  if checkJadwalPenayangan(0, tanggal, mulai, selesai, audiotorium_id) {
+    return errors.New("jadwal penayangan sudah ada")
+  }
+	penayangan := Penayangan{
+		FilmID:        film_id,
+		Tanggal:       tanggal,
+		Mulai:         mulai,
+		Selesai:       selesai,
+		AudiotoriumID: audiotorium_id,
+		Harga:         harga,
+	}
+	return Db.Create(&penayangan).Error
+}
+
+func UpdatePenayangan(id uint, film_id uint, tanggal time.Time, mulai time.Time, selesai time.Time, audiotorium_id uint, harga uint) error {
+  if checkJadwalPenayangan(id, tanggal, mulai, selesai, audiotorium_id) {
+    return errors.New("jadwal penayangan sudah ada")
+  }
+	penayangan := Penayangan{
+		FilmID:        film_id,
+		Tanggal:       tanggal,
+		Mulai:         mulai,
+		Selesai:       selesai,
+		AudiotoriumID: audiotorium_id,
+		Harga:         harga,
+	}
+	return Db.Model(&Penayangan{ID: id}).Updates(&penayangan).Error
+}
+
+func DeletePenayangan(id uint) error {
+	penayangan := Penayangan{ID: id}
+	return Db.Unscoped().Delete(&penayangan).Error
 }

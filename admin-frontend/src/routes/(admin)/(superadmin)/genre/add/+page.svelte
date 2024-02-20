@@ -15,7 +15,7 @@
 </script>
 
 <form
-	method="POSt"
+	method="POST"
 	enctype="multipart/form-data"
 	use:enhance={() =>
 		async ({ result }) => {

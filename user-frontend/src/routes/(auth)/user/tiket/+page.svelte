@@ -10,7 +10,7 @@
 		{#if data.tiket.length === 0}
 			<h4 class="text-3xl font-semibold opacity-40">Tidak ada tiket yang dipesan</h4>
 		{/if}
-		{#each data.tiket as tiket}
+		{#each data.tiket as tiket (tiket.id)}
 			<a
 				href={tiket.status_pembayaran === 'done'
 					? `/user/tiket/${tiket.id}`
@@ -29,6 +29,10 @@
 							year: 'numeric',
 							month: 'long',
 							day: 'numeric',
+							hour: '2-digit',
+							minute: '2-digit',
+							second: '2-digit',
+							hour12: false,
 						})}
 					</p>
 				</div>

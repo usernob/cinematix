@@ -22,6 +22,7 @@ export type Penayangan = BaseModel & {
 	film_id: number;
 	audiotorium_id: number;
 	harga: number;
+	tanggal: string;
 	mulai: string;
 	selesai: string;
 };

@@ -8,5 +8,5 @@ export const load: PageServerLoad = async ({ fetch, parent, cookies }) => {
 	const req = await fetch(routeApi('admin/list-admin'));
 	const res: ApiResponse<User[]> = await req.json();
 
-	return { users: res.data, user, token: cookies.get('admin-token') };
+	return { users: res.data, user, token: cookies.get('admin-token'), title: 'List Petugas' };
 };

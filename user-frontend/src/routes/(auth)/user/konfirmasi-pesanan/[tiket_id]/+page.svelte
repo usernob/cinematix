@@ -68,7 +68,7 @@
 
 					<p>Tanggal</p>
 					<p>
-						{new Date(penayangan.mulai).toLocaleDateString('id-ID', {
+						{new Date(penayangan.tanggal).toLocaleDateString('id-ID', {
 							weekday: 'long',
 							year: 'numeric',
 							month: 'long',
@@ -92,7 +92,7 @@
 					</p>
 
 					<p>Nomor Kursi</p>
-					<p>{seats.map((val) => val.nama).join(', ')}</p>
+					<p class="max-w-40">{seats.map((val) => val.nama).join(', ')}</p>
 				</div>
 			</div>
 		</div>

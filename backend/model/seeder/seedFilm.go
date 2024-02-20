@@ -49,20 +49,24 @@ func seedFilmAndPenyangan() {
 
 		penyangan := []*model.Penayangan{}
 		for j := 0; j < rand.Intn(25); j++ {
+			var tanggal time.Time
 			var mulai time.Time
 			var selesai time.Time
 
 			if j%3 == 0 {
-				mulai = time.Now().Add(time.Hour * (4 * time.Duration(-i+-j)))
-				selesai = time.Now().Add(time.Hour*(4*time.Duration(-i+-j)) + time.Hour*2)
+				tanggal = time.Now().Add(time.Hour * (4 * time.Duration(-i+-j)))
+				mulai = tanggal
+				selesai = mulai.Add(time.Hour * 2)
 			} else {
-				mulai = time.Now().Add(time.Hour * (12 * time.Duration(i+j)))
-				selesai = time.Now().Add(time.Hour*(12*time.Duration(i+j)) + time.Hour*2)
+				tanggal = time.Now().Add(time.Hour * (12 * time.Duration(i+j)))
+				mulai = tanggal
+				selesai = mulai.Add(time.Hour * 2)
 			}
 
 			penyangan = append(penyangan, &model.Penayangan{
 				AudiotoriumID: audiotorium[rand.Intn(3)].ID,
 				Harga:         50000,
+				Tanggal:       tanggal,
 				Mulai:         mulai,
 				Selesai:       selesai,
 			})

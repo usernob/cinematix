@@ -8,7 +8,13 @@
 
 	$: activeUrl = $page.url.pathname;
 
-	const superadminRoute: string[] = ['film', 'admin-list', 'genre', 'tambah-petugas'];
+	const superadminRoute: string[] = [
+		'penayangan',
+		'film',
+		'genre',
+		'list-petugas',
+		'tambah-petugas',
+	];
 	const adminRoute: string[] = ['film'];
 </script>
 

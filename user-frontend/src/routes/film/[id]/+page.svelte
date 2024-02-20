@@ -22,7 +22,7 @@
 		let jadwal: { date: string; time: { id: number; mulai: string; selesai: string }[] }[] = [];
 		if (firstData) {
 			firstData.penayangan.forEach((item: Penayangan) => {
-				const dateobj: Date = new Date(item.mulai);
+				const dateobj: Date = new Date(item.tanggal);
 				const localeDate = dateobj.toLocaleString('id-ID', {
 					weekday: 'long',
 					month: 'long',
@@ -31,7 +31,7 @@
 
 				const extractedItem = {
 					id: item.id,
-					mulai: dateobj.toLocaleTimeString('en-US', {
+					mulai: new Date(item.mulai).toLocaleTimeString('en-US', {
 						hour: '2-digit',
 						minute: '2-digit',
 						hour12: false,

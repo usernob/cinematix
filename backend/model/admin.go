@@ -14,6 +14,7 @@ type Admin struct {
 	Password  string         `json:"password"`
 	Role      Role           `sql:"type:role" json:"role" gorm:"default:admin"`
 	Avatar    *string        `json:"avatar"`
+	Tiket     []*Tiket       `gorm:"foreignKey:SignedBy" json:"tiket,omitempty"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index"`

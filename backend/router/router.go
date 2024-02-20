@@ -33,12 +33,16 @@ func SetupRouter() *gin.Engine {
 		r.GET("/films/akan-tayang", filmcontroller.FilmAkanTayang)
 		r.GET("/films/populer", filmcontroller.FilmPopuler)
 		r.GET("/films", filmcontroller.FilmList)
+		r.GET("/films/search", filmcontroller.FilmSearch)
 		r.GET("/films/:id", filmcontroller.FilmDetail)
 		r.GET("/films/:id/:penayangan_id", filmcontroller.FilmDetailPenayangan)
 
-    r.GET("/genre/search", filmcontroller.GenreSearch)
-    r.GET("/genre", filmcontroller.GenreList)
-    r.GET("/genre/:id", filmcontroller.GenreDetail)
+		r.GET("penayangan", filmcontroller.GetListPenayangan)
+    r.GET("penayangan/:id", filmcontroller.GetPenayanganDetail)
+
+		r.GET("/genre/search", filmcontroller.GenreSearch)
+		r.GET("/genre", filmcontroller.GenreList)
+		r.GET("/genre/:id", filmcontroller.GenreDetail)
 
 		r.GET("/kursi/:penayangan_id", kursicontroller.ShowKursi)
 		r.GET("/kursi/:penayangan_id/:kursi_id", kursicontroller.CheckStatusKursi)
@@ -58,13 +62,17 @@ func SetupRouter() *gin.Engine {
 		superAdmin.GET("/list-admin", admincontroller.AdminList)
 		superAdmin.DELETE("/:id", admincontroller.DeleteAdmin)
 
-    superAdmin.PUT("/films/:id", filmcontroller.EditFilm)
-    superAdmin.POST("/films", filmcontroller.AddFilm)
-    superAdmin.DELETE("/films/:id", filmcontroller.DeleteFilm)
+		superAdmin.PUT("/films/:id", filmcontroller.EditFilm)
+		superAdmin.POST("/films", filmcontroller.AddFilm)
+		superAdmin.DELETE("/films/:id", filmcontroller.DeleteFilm)
 
-    superAdmin.POST("/genre", filmcontroller.AddGenre)
-    superAdmin.PUT("/genre/:id", filmcontroller.EditGenre)
-    superAdmin.DELETE("/genre/:id", filmcontroller.DeleteGenre)
+		superAdmin.POST("/penayangan", filmcontroller.AddPenayangan)
+		superAdmin.DELETE("/penayangan/:id", filmcontroller.DeletePenayangan)
+		superAdmin.PUT("/penayangan/:id", filmcontroller.EditPenayangan)
+
+		superAdmin.POST("/genre", filmcontroller.AddGenre)
+		superAdmin.PUT("/genre/:id", filmcontroller.EditGenre)
+		superAdmin.DELETE("/genre/:id", filmcontroller.DeleteGenre)
 	}
 
 	user := r.Group("/user")

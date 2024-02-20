@@ -75,6 +75,40 @@ func FilmDetail(c *gin.Context) {
 	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
 }
 
+func FilmSearch(c *gin.Context) {
+  q := c.Query("q")
+  data, err := model.FindFilm(q)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+    return
+  }
+  c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
+}
+
+func GetListPenayangan(c *gin.Context) {
+	data, err := model.GetListPenayangan()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
+}
+
+func GetPenayanganDetail(c *gin.Context) {
+  strid := c.Param("id")
+  id, convErr := strconv.Atoi(strid)
+  if convErr != nil {
+    c.JSON(http.StatusBadRequest, controller.Response(controller.Error, convErr.Error(), nil))
+    return
+  }
+  data, err := model.GetPenayanganDetail(uint(id))
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+    return
+  }
+  c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", data))
+}
+
 func FilmDetailPenayangan(c *gin.Context) {
 	id := c.Param("id")
 	penayangan_id := c.Param("penayangan_id")
@@ -288,4 +322,69 @@ func DeleteGenre(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
+}
+
+type PenayanganRequest struct {
+	FilmID        uint      `json:"film_id" form:"film_id" binding:"required"`
+	AudiotoriumID uint      `json:"audiotorium_id" form:"audiotorium_id" binding:"required"`
+	Tanggal       time.Time `json:"tanggal" form:"tanggal" binding:"required" time_format:"2006-01-02"`
+	Mulai         time.Time `json:"mulai" form:"mulai" binding:"required" time_format:"15:04"`
+	Selesai       time.Time `json:"selesai" form:"selesai" binding:"required" time_format:"15:04"`
+	Harga         uint      `json:"harga" form:"harga" binding:"required"`
+}
+
+func fixDateTime(date time.Time, datetime time.Time) time.Time {
+  return time.Date(date.Year(), date.Month(), date.Day(), datetime.Hour(), datetime.Minute(), 0, 0, date.Location())
+}
+
+func AddPenayangan(c *gin.Context) {
+  var req PenayanganRequest
+  bindErr := c.ShouldBind(&req)
+  if bindErr != nil {
+    c.JSON(http.StatusBadRequest, controller.Response(controller.Error, bindErr.Error(), nil))
+    return
+  }
+  err := model.AddPenayangan(req.FilmID, req.Tanggal, fixDateTime(req.Tanggal, req.Mulai), fixDateTime(req.Tanggal, req.Selesai), req.AudiotoriumID, req.Harga)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+    return
+  }
+  c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
+}
+
+func EditPenayangan(c *gin.Context) {
+  var req PenayanganRequest
+  strid := c.Param("id")
+  id, convErr := strconv.Atoi(strid)
+  if convErr != nil {
+    c.JSON(http.StatusBadRequest, controller.Response(controller.Error, convErr.Error(), nil))
+    return
+  }
+  bindErr := c.ShouldBind(&req)
+  if bindErr != nil {
+    c.JSON(http.StatusBadRequest, controller.Response(controller.Error, bindErr.Error(), nil))
+    return
+  }
+  err := model.UpdatePenayangan(uint(id), req.FilmID, req.Tanggal, fixDateTime(req.Tanggal, req.Mulai), fixDateTime(req.Tanggal, req.Selesai), req.AudiotoriumID, req.Harga)
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+    return
+  }
+  c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
+}
+
+func DeletePenayangan(c *gin.Context) {
+  strid := c.Param("id")
+  id, convErr := strconv.Atoi(strid)
+  if convErr != nil {
+    c.JSON(http.StatusBadRequest, controller.Response(controller.Error, convErr.Error(), nil))
+    return
+  }
+  err := model.DeletePenayangan(uint(id))
+  if err != nil {
+    c.JSON(http.StatusInternalServerError, controller.Response(controller.Error, err.Error(), nil))
+    return
+  }
+
+  c.JSON(http.StatusOK, controller.Response(controller.Ok, "Success", nil))
 }
