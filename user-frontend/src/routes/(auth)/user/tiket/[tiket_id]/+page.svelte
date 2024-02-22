@@ -66,7 +66,7 @@
 		</div>
 		<svg
 			use:qr={{
-				data: `TIX-${data.user.id}-${data.dataFilm.id}-${penayangan.id}`,
+				data: `${data.user.id}-${penayangan.tiket[0].id}`,
 				shape: 'square',
 
 				anchorInnerFill: 'black',
@@ -75,6 +75,7 @@
 			}}
 			class="aspect-square w-64 rounded-lg bg-white p-4 shadow-lg md:w-96"
 		/>
+		<p class="text-sm">{`${data.user.id}-${penayangan.tiket[0].id}`}</p>
 		<p>Berikan Kode QR ini kepada petugas untuk memvalidasi tiket</p>
 	</div>
 </div>

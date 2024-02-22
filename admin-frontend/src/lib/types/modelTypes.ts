@@ -31,6 +31,7 @@ export type Penayangan = BaseModel & {
 export type Tiket = BaseModel & {
 	penyangan_id: number;
 	total_harga: number;
+  sigend_by: number,
 	user_id: number;
 	status_pembayaran: string;
 };

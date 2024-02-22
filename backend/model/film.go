@@ -138,8 +138,6 @@ func AddFilm(title string, rating float32, tanggalRilis time.Time, sinopsis stri
 }
 
 func EditFilm(id int, title string, rating float32, tanggalRilis time.Time, sinopsis string, posterPath string, genreIds []int) error {
-	fmt.Println(posterPath)
-	fmt.Println(genreIds)
 	film, err := GetFilmDetail(uint(id))
 	if err != nil {
 		return err

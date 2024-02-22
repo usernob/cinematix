@@ -140,7 +140,7 @@
 			<p class="text-red-500">{form?.message}</p>
 		</div>
 	{/if}
-	<Button type="submit" class="mt-8">Update</Button>
+	<Button type="submit" class="mt-8">Tambah</Button>
 	<Button
 		type="button"
 		color="alternative"

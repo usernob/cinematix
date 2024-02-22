@@ -2,6 +2,13 @@ import type { ApiResponse } from '@/lib/types/apiResponse';
 import type { User } from '@/lib/types/modelTypes';
 import { routeApi } from '@/lib/util';
 import { fail, type Actions } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+
+export const load: PageServerLoad = () => {
+  return {
+    title: 'Tambah Petugas',
+  }
+}
 
 export const actions: Actions = {
 	default: async ({ request, fetch }) => {

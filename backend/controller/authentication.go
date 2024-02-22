@@ -3,7 +3,6 @@ package controller
 import (
 	"backend/model"
 	"backend/pkg/jwt"
-	"backend/pkg/logjson"
 	"backend/pkg/passwordhash"
 	"errors"
 	"net/http"
@@ -110,7 +109,6 @@ func AdminLogin(c *gin.Context) {
 		return
 	}
 
-	logjson.ToJSON(json)
 	admin, err := model.GetAdminByEmail(json.Email)
 	if err != nil {
 		c.JSON(http.StatusNotFound, Response(Error, err.Error(), nil))

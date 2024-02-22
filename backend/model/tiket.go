@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql/driver"
+	"errors"
 	"time"
 
 	"gorm.io/gorm"
@@ -90,6 +91,9 @@ func GetPesanan(tiketid uint, userid uint, status Status_Pembayaran) (*Film, err
 
 	film.Penayangan = append(film.Penayangan, &penayangan)
 
+  if film.ID == 0 { // film with id 0 is mean film not found
+    return nil, errors.New("film not found")
+  }
 	return &film, nil
 }
 
@@ -118,4 +122,14 @@ func DeleteExpTiket() {
 	if len(tiketExp) > 0 {
 		Db.Select("Kursi").Unscoped().Delete(&tiketExp)
 	}
+}
+
+func CheckInTiket(tiket_id uint, admin_id uint) error {
+
+  tiket := &Tiket{ID: tiket_id}
+  err := Db.Model(tiket).Update("signed_by", admin_id)
+  if err.Error != nil {
+    return err.Error
+  }
+  return nil
 }

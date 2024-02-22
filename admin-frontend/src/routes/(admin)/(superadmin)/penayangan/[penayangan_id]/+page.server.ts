@@ -12,14 +12,6 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
 		throw new Error('Penayangan not found');
 	}
 
-	console.log(
-		new Date(res.data.tanggal).toLocaleTimeString('en-US', {
-			hour: '2-digit',
-			minute: '2-digit',
-			hour12: false,
-		})
-	);
-
 	return {
 		penayangan: res.data,
 		title: 'Edit Penayangan',
@@ -38,7 +30,6 @@ export const actions: Actions = {
 		const mulai = body.get('mulai');
 		const selesai = body.get('selesai');
 
-		console.log(body);
 		if (!film_id || !audiotorium_id || !harga || !tanggal || !mulai || !selesai) {
 			return fail(400, {
 				missing: true,

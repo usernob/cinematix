@@ -47,7 +47,6 @@
 		const req = await fetch(routeApi('penayangan'));
 
 		const res: ApiResponse<Penayangan[] & { film: Film }[]> = await req.json();
-		console.log(res);
 		if (res.status === 'ok') {
 			for (const penayangan of res.data) {
 				const filmPenayangan: FilmPenayangan = {

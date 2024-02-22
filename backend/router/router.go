@@ -5,6 +5,7 @@ import (
 	admincontroller "backend/controller/adminController"
 	filmcontroller "backend/controller/filmController"
 	kursicontroller "backend/controller/kursiController"
+	tiketcontroller "backend/controller/tiketController"
 	usercontroller "backend/controller/userController"
 	"backend/router/middleware"
 
@@ -54,6 +55,9 @@ func SetupRouter() *gin.Engine {
 		admin.GET("/info", admincontroller.GetAdminInformation)
 		admin.GET("/all-films", filmcontroller.GetAllFilm)
 		admin.GET("/report/thisweek", admincontroller.GetThisWeekReport)
+
+    admin.GET("/tiket/search", tiketcontroller.SearchTiket)
+    admin.POST("/tiket/checkin/:tiket_id", tiketcontroller.CheckInTiket)
 	}
 
 	superAdmin := admin.Use(middleware.SuperAdminRole())

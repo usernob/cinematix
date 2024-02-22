@@ -16,6 +16,7 @@
 	import type { User } from '@/lib/types/modelTypes';
 	import { onMount } from 'svelte';
 	import { sineIn } from 'svelte/easing';
+	import { page } from '$app/stores';
 
 	export let title: string = 'Films';
 	export let user: User | null = null;
@@ -58,7 +59,12 @@
 		drawerHidden = false;
 	};
 
+  $: activeUrl = $page.url.pathname
+
 	$: activeRootUrl = '/' + activeUrl.split('/')[1];
+  $: if (activeRootUrl === '/dashboard') {
+    activeRootUrl = activeUrl
+  }
 </script>
 
 <svelte:head>
@@ -82,8 +88,7 @@
 						<span class="block truncate text-sm font-medium">{user.nama}</span>
 						<span class="block truncate text-sm font-medium">{user.email}</span>
 					</DropdownHeader>
-					<DropdownItem><a href="/">Dasboard</a></DropdownItem>
-					<DropdownItem><a href="/logout">Log out</a></DropdownItem>
+					<DropdownItem><a href="/logout" data-sveltekit-preload-data="tap">Log out</a></DropdownItem>
 				</Dropdown>
 			{:else}
 				<a
@@ -121,7 +126,11 @@
 	>
 		<SidebarWrapper divClass="overflow-y-auto py-4 px-3 rounded dark:bg-gray-800">
 			<SidebarGroup>
-				<SidebarItem label="Dasboard" href="/" on:click={toggleSide} />
+				{#if user?.role === 'admin'}
+					<SidebarItem label="Dashboard" href="/dashboard/petugas" on:click={toggleSide} />
+				{:else}
+					<SidebarItem label="Dashboard" href="/dashboard/superadmin" on:click={toggleSide} />
+				{/if}
 				{#each routes as route}
 					<SidebarItem
 						label={route.replaceAll('-', ' ')}

@@ -15,7 +15,7 @@
 		'list-petugas',
 		'tambah-petugas',
 	];
-	const adminRoute: string[] = ['film'];
+	const adminRoute: string[] = ['penayangan', 'film', 'genre'];
 </script>
 
 <Header

@@ -30,7 +30,6 @@
 			}
 		}}
 >
-	<h2 class="mb-8 text-2xl font-bold">Tambah Petugas</h2>
 	<div class="mb-6">
 		<Label for="nama" class="text-md mb-2 block">Nama</Label>
 		<Input

@@ -1,7 +1,6 @@
 package model
 
 import (
-	"backend/pkg/logjson"
 	"errors"
 	"time"
 
@@ -112,7 +111,6 @@ func DeleteExpPenayangan() error {
 func checkJadwalPenayangan(id uint, tanggal time.Time, mulai time.Time, selesai time.Time, audiotorium_id uint) bool {
 	var penayangans []Penayangan
 	res := Db.Where("id != ?", id).Where("audiotorium_id = ?", audiotorium_id).Where("tanggal = ?", tanggal).Where("mulai BETWEEN ? AND ?", mulai, selesai).Or("selesai BETWEEN ? AND ?", mulai, selesai).Find(&penayangans)
-  logjson.ToJSON(penayangans)
   if res.Error != nil {
     return true
   }

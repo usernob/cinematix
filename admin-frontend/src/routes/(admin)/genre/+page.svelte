@@ -90,7 +90,7 @@
 
 <TableSearch
 	hoverable={true}
-	placeholder="Cari Nama film"
+	placeholder="Cari Nama Genre"
 	bind:inputValue={searchTerm}
 	searchClass="relative"
 	innerDivClass="py-4 flex justify-between items-center gap-4"

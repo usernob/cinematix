@@ -10,6 +10,7 @@ export const actions: Actions = {
 		const email = formData.get('email') as string;
 		const avatar = formData.get('avatar') as File;
 		const data = new FormData();
+
 		if (avatar?.size && avatar.size > 0) {
 			data.append('avatar', avatar);
 		}
@@ -19,6 +20,7 @@ export const actions: Actions = {
 			return fail(400, { missing: true, name: nama, email });
 		}
 
+    console.log(data)
 		const updateUser = await fetch(routeApi('user/profile/update'), {
 			method: 'PUT',
 			body: data,

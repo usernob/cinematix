@@ -9,6 +9,6 @@ export const load: LayoutServerLoad = async ({ parent }) => {
 	}
 
 	if (user.role !== 'admin') {
-		throw redirect(302, '/');
+		throw redirect(302, '/dashboard/superadmin');
 	}
 };

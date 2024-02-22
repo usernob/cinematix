@@ -59,7 +59,6 @@
 	const calculateHarga = () => {
 		let baseHarga =
 			$dataFilm?.penayangan.find((item) => item.id === Number(data.penayanganid))?.harga ?? 0;
-		console.log('hiii');
 		harga = baseHarga * kursiDiPilih.length;
 	};
 

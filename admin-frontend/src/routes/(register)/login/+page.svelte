@@ -27,7 +27,11 @@
 				const user = result.data?.user;
 				if (user) $session.user = user;
 				await invalidateAll();
-				await goto('/');
+				if (result.data?.user?.role === 'admin') {
+					await goto('/dashboard/petugas');
+				} else {
+					await goto('/dashboard/superadmin');
+				}
 			}
 		}}
 >
